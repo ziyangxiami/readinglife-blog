@@ -48,12 +48,12 @@ export default async function BlogPage({
       <Navigation />
       
       {/* 页面标题 */}
-      <section className="py-16 px-4">
+      <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-3">
             {search ? `搜索结果: "${search}"` : currentCategory ? currentCategory.name : currentTag ? currentTag.name : '所有文章'}
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
             {search ? `找到 ${total} 篇相关文章` : currentCategory ? currentCategory.description : currentTag ? `标签 "${currentTag.name}" 下的文章` : '分享读书心得，记录学习历程'}
           </p>
         </div>
@@ -64,7 +64,7 @@ export default async function BlogPage({
           {/* 主内容区 */}
           <main className="flex-1">
             {/* 搜索框 */}
-            <div className="mb-8">
+            <div className="mb-6">
               <SearchBox />
             </div>
 
@@ -83,7 +83,7 @@ export default async function BlogPage({
             ) : (
               <div className="space-y-6">
                 {posts.map((post: any) => (
-                  <article key={post.id} className="bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                  <article key={post.id} className="bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all duration-200">
                     <div className="p-6">
                       <div className="flex flex-col md:flex-row gap-6">
                         {post.cover_image && (
@@ -126,7 +126,7 @@ export default async function BlogPage({
                             <div className="flex items-center gap-2">
                               {post.category && (
                                 <Link href={`/blog?category=${post.category.slug}`}>
-                                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs hover:bg-blue-100 transition-colors">
+                                  <span className="flex items-center gap-1 px-3 py-1 bg-gray-50 text-gray-700 rounded-full text-xs hover:bg-gray-100 transition-colors">
                                     <Folder className="w-3 h-3" />
                                     {post.category.name}
                                   </span>
@@ -136,7 +136,7 @@ export default async function BlogPage({
                                 <div className="flex items-center gap-1">
                                   {post.tags.slice(0, 3).map((tag: any) => (
                                     <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
-                                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200 transition-colors">
+                                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs hover:bg-gray-100 transition-colors">
                                         <Tag className="w-3 h-3" />
                                         {tag.name}
                                       </span>
@@ -196,25 +196,25 @@ export default async function BlogPage({
           {/* 侧边栏 */}
           <aside className="lg:w-80">
             {/* 分类 */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="mb-6 border-0 shadow-sm bg-gray-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-gray-900">
                   <Folder className="w-5 h-5" />
                   文章分类
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {categories.map((category: any) => (
                     <Link
                       key={category.id}
                       href={`/blog?category=${category.slug}`}
-                      className={`flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors ${
-                        currentCategory?.id === category.id ? 'bg-blue-50 text-blue-700' : ''
+                      className={`flex items-center justify-between p-2 rounded-lg hover:bg-white transition-colors ${
+                        currentCategory?.id === category.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
                       }`}
                     >
                       <span>{category.name}</span>
-                      <span className="text-sm text-gray-500">({category.post_count})</span>
+                      <span className="text-sm text-gray-400">({category.post_count})</span>
                     </Link>
                   ))}
                 </div>
@@ -222,9 +222,9 @@ export default async function BlogPage({
             </Card>
 
             {/* 热门标签 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="border-0 shadow-sm bg-gray-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-gray-900">
                   <Tag className="w-5 h-5" />
                   热门标签
                 </CardTitle>
@@ -235,11 +235,11 @@ export default async function BlogPage({
                     <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
                         currentTag?.id === tag.id 
-                          ? 'bg-blue-100 text-blue-700' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-white text-gray-900 shadow-sm' 
+                          : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                       }`}>
                         {tag.name}
-                        <span className="text-gray-500">({tag.post_count})</span>
+                        <span className="text-gray-400">({tag.post_count})</span>
                       </span>
                     </Link>
                   ))}

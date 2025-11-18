@@ -58,7 +58,7 @@ export function Navigation({ className }: NavigationProps) {
   }
 
   return (
-    <nav className={cn('bg-white shadow-sm border-b border-gray-200', className)}>
+    <nav className={cn('bg-white border-b border-gray-100', className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
@@ -90,7 +90,7 @@ export function Navigation({ className }: NavigationProps) {
                   className={cn(
                     'flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors',
                     isActive
-                      ? 'text-blue-600 bg-blue-50'
+                      ? 'text-gray-900 bg-gray-100'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
@@ -131,7 +131,7 @@ export function Navigation({ className }: NavigationProps) {
                   className={cn(
                     'flex items-center gap-2 px-3 py-2 text-base font-medium rounded-md transition-colors',
                     isActive
-                      ? 'text-blue-600 bg-blue-50'
+                      ? 'text-gray-900 bg-gray-100'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
