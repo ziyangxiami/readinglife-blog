@@ -14,21 +14,22 @@ import { SearchBox } from '@/components/search-box'
 export default async function BlogPage({
   searchParams
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const page = parseInt(searchParams.page as string) || 1
-  const category = searchParams.category as string
-  const tag = searchParams.tag as string
-  const search = searchParams.search as string
+  const params = await searchParams
+  const page = parseInt(params.page as string) || 1
+  const category = params.category as string
+  const tag = params.tag as string
+  const search = params.search as string
 
   // 根据查询参数获取不同类型的文章列表
   let postData
   if (search) {
-    postData = await searchPostsList(search as string, page, 10)
+    postData = await searchPostsList(search, page, 10)
   } else if (category) {
-    postData = await getPostsByCategorySlug(category as string, page, 10)
+    postData = await getPostsByCategorySlug(category, page, 10)
   } else if (tag) {
-    postData = await getPostsByTagSlug(tag as string, page, 10)
+    postData = await getPostsByTagSlug(tag, page, 10)
   } else {
     postData = await getPosts(page, 10)
   }
