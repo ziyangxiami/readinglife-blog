@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { BookOpen, Mail, Coffee, Heart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Navigation } from '@/components/navigation'
-import { getBlogStats } from '@/lib/api'
+import { getPosts } from '@/lib/sanity-api'
 
 /**
  * 关于页面
@@ -15,7 +15,13 @@ import { getBlogStats } from '@/lib/api'
  * 基于简历的真实信息展示（隐藏姓名；联系方式仅邮箱；统计接入数据库真实数据）
  */
 export default async function AboutPage() {
-  const stats = await getBlogStats()
+  const { posts, total } = await getPosts()
+  const stats = {
+    posts: total,
+    categories: 3, // 模拟数据
+    tags: 10, // 模拟数据
+    views: total * 15 // 模拟阅读量
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navigation />

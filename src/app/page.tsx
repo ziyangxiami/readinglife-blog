@@ -1,4 +1,4 @@
-import { getPosts, getCategories, getTags } from '@/lib/api'
+import { getPosts, getCategories, getTags, getFeaturedPostsList } from '@/lib/sanity-api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -167,7 +167,7 @@ function ArticleCard({ post }: { post: any }) {
               )}
             </div>
             <span className="text-sm text-gray-500">
-              {post.view_count} 次阅读
+              {post.reading_time} 分钟阅读
             </span>
           </div>
         </CardContent>

@@ -1,0 +1,127 @@
+/* src/app/admin/[[...index]]/studio.css */
+/* 自定义Studio样式 */
+:root {
+  --sanity-color-base-bg: #ffffff;
+  --sanity-color-base-text: #1a1a1a;
+  --sanity-color-brand: #3b82f6;
+  --sanity-color-brand-hover: #2563eb;
+}
+
+/* 自定义品牌颜色 */
+.sanity-studio [data-ui='Navbar'] {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.sanity-studio [data-ui='Button']:where([data-tone='primary']) {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.sanity-studio [data-ui='Button']:where([data-tone='primary']):hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* 自定义编辑器样式 */
+.sanity-studio .pt-editor {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.sanity-studio .pt-editor h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+}
+
+.sanity-studio .pt-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.sanity-studio .pt-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
+.sanity-studio .pt-editor p {
+  line-height: 1.7;
+  margin: 0.75rem 0;
+}
+
+.sanity-studio .pt-editor blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.sanity-studio .pt-editor code {
+  background: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+}
+
+.sanity-studio .pt-editor pre {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.sanity-studio .pt-editor pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* 自定义图片样式 */
+.sanity-studio .pt-image {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* 自定义表格样式 */
+.sanity-studio .pt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.sanity-studio .pt-table th,
+.sanity-studio .pt-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.sanity-studio .pt-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sanity-studio {
+    font-size: 14px;
+  }
+  
+  .sanity-studio .pt-editor h1 {
+    font-size: 1.75rem;
+  }
+  
+  .sanity-studio .pt-editor h2 {
+    font-size: 1.375rem;
+  }
+  
+  .sanity-studio .pt-editor h3 {
+    font-size: 1.125rem;
+  }
+}

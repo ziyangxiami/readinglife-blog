@@ -1,4 +1,4 @@
-import { getPosts, getCategories, getTags } from '@/lib/api'
+import { getPosts, getCategories, getTags, getPostsByCategorySlug, getPostsByTagSlug, searchPostsList } from '@/lib/sanity-api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, User, Tag, Folder, Search } from 'lucide-react'
@@ -21,8 +21,20 @@ export default async function BlogPage({
   const tag = searchParams.tag as string
   const search = searchParams.search as string
 
-  const [{ posts, total, totalPages }, categories, tags] = await Promise.all([
-    getPosts(page, 10, category, tag, search),
+  // 根据查询参数获取不同类型的文章列表
+  let postData
+  if (search) {
+    postData = await searchPostsList(search as string, page, 10)
+  } else if (category) {
+    postData = await getPostsByCategorySlug(category as string, page, 10)
+  } else if (tag) {
+    postData = await getPostsByTagSlug(tag as string, page, 10)
+  } else {
+    postData = await getPosts(page, 10)
+  }
+  
+  const { posts, total, totalPages } = postData
+  const [categories, tags] = await Promise.all([
     getCategories(),
     getTags()
   ])
@@ -96,7 +108,7 @@ export default async function BlogPage({
                             </span>
                             <span className="flex items-center gap-1">
                               <User className="w-4 h-4" />
-                              {post.view_count} 次阅读
+                              {post.reading_time} 分钟阅读
                             </span>
                           </div>
                           <h2 className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
@@ -105,7 +117,7 @@ export default async function BlogPage({
                             </Link>
                           </h2>
                           <p className="text-gray-600 mb-4 line-clamp-3">
-                            {post.excerpt || post.content.slice(0, 200)}...
+                            {post.excerpt}
                           </p>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
