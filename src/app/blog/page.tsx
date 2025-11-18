@@ -44,7 +44,7 @@ export default async function BlogPage({
   const currentTag = tag ? tags.find(t => t.slug === tag) : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
       
       {/* 页面标题 */}
@@ -83,7 +83,7 @@ export default async function BlogPage({
             ) : (
               <div className="space-y-6">
                 {posts.map((post: any) => (
-                  <article key={post.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                  <article key={post.id} className="bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                     <div className="p-6">
                       <div className="flex flex-col md:flex-row gap-6">
                         {post.cover_image && (
@@ -136,7 +136,7 @@ export default async function BlogPage({
                                 <div className="flex items-center gap-1">
                                   {post.tags.slice(0, 3).map((tag: any) => (
                                     <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
-                                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs hover:bg-gray-100 transition-colors">
+                                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200 transition-colors">
                                         <Tag className="w-3 h-3" />
                                         {tag.name}
                                       </span>

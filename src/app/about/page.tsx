@@ -19,22 +19,12 @@ export default function AboutPage() {
               <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
                 关于我
               </h1>
-              <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                我是一名热爱读书和学习的程序员，相信知识的力量能够改变人生。在这个信息爆炸的时代，通过阅读和思考，在纷繁复杂的世界中找到属于自己的方向。
-              </p>
-              <div className="flex gap-4">
-                <Link 
-                  href="mailto:contact@readinglife.com" 
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  联系我 →
-                </Link>
-              </div>
+
             </div>
             <div className="flex-shrink-0">
               <div className="w-64 h-64 bg-gray-100 rounded-full overflow-hidden">
                 <Image
-                  src="/logo-avatar.svg"
+                  src="/logo-avatar-new.svg"
                   alt="个人头像"
                   width={256}
                   height={256}
@@ -46,46 +36,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Philosophy Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-light text-gray-900 mb-8">读书理念</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">为什么选择读书？</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>读书是与智者对话的最佳方式</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>每一本书都是一个新的世界</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>知识是改变命运的钥匙</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">我的读书方法</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>精读与泛读相结合</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>做笔记，记录思考</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-gray-400 mt-1">→</span>
-                  <span>定期回顾和总结</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
+
 
         {/* Experience Section */}
         <section className="mb-20">
@@ -93,24 +44,66 @@ export default function AboutPage() {
           <div className="space-y-8">
             <div className="border-l-2 border-gray-200 pl-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-medium text-gray-900">某互联网科技公司</h3>
-                <span className="text-sm text-gray-500">2022 - 至今</span>
+                <h3 className="text-lg font-medium text-gray-900">作业帮（海外） | 运营负责人</h3>
+                <span className="text-sm text-gray-500">2025 - 至今</span>
               </div>
-              <p className="text-gray-600 mb-2">负责前端架构设计与核心功能开发，提升用户体验。参与团队协作流程优化，提高开发效率和代码质量。</p>
+              <p className="text-gray-600 mb-2">负责全球化运营体系、AI内容生态与安全建设。</p>
             </div>
             <div className="border-l-2 border-gray-200 pl-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-medium text-gray-900">某软件开发公司</h3>
-                <span className="text-sm text-gray-500">2020 - 2022</span>
+                <h3 className="text-lg font-medium text-gray-900">快手（海外） | 策略产品&产品运营</h3>
+                <span className="text-sm text-gray-500">2020 - 2025</span>
               </div>
-              <p className="text-gray-600 mb-2">参与多个Web应用项目的全周期开发，负责前端性能优化，显著提升页面加载速度和响应性能。</p>
+              <p className="text-gray-600 mb-2">负责海外用户增长、内容生态及商业化变现。</p>
             </div>
             <div className="border-l-2 border-gray-200 pl-6">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-medium text-gray-900">某初创科技公司</h3>
-                <span className="text-sm text-gray-500">2018 - 2020</span>
+                <h3 className="text-lg font-medium text-gray-900">阿里巴巴（海外） | 产品专家</h3>
+                <span className="text-sm text-gray-500">2019 - 2020</span>
               </div>
-              <p className="text-gray-600 mb-2">参与产品从0到1的开发过程，负责移动端适配和响应式设计，确保跨平台兼容性。</p>
+              <p className="text-gray-600 mb-2">负责海外短视频体验优化、本地化及新方向探索。</p>
+            </div>
+            <div className="border-l-2 border-gray-200 pl-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-medium text-gray-900">小米科技（海外） | 产品经理</h3>
+                <span className="text-sm text-gray-500">2018 - 2019</span>
+              </div>
+              <p className="text-gray-600 mb-2">负责海外应用商业化变现及短视频业务战略孵化。</p>
+            </div>
+            <div className="border-l-2 border-gray-200 pl-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-medium text-gray-900">京东金融 | 产品管理</h3>
+                <span className="text-sm text-gray-500">2017 - 2018</span>
+              </div>
+              <p className="text-gray-600 mb-2">负责微信生态下的用户增长产品设计与项目管理。</p>
+            </div>
+            <div className="border-l-2 border-gray-200 pl-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-medium text-gray-900">迅雷网络 | 产品经理</h3>
+                <span className="text-sm text-gray-500">2014 - 2017</span>
+              </div>
+              <p className="text-gray-600 mb-2">负责工具转社区的产品设计及短视频分发策略。</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Education Section */}
+        <section className="mb-20">
+          <h2 className="text-3xl font-light text-gray-900 mb-8">教育背景</h2>
+          <div className="space-y-8">
+            <div className="border-l-2 border-gray-200 pl-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-medium text-gray-900">中国科学院大学</h3>
+                <span className="text-sm text-gray-500">2019 - 2022</span>
+              </div>
+              <p className="text-gray-600 mb-2">在职研究生 - 大数据与用户研究</p>
+            </div>
+            <div className="border-l-2 border-gray-200 pl-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-medium text-gray-900">武汉大学</h3>
+                <span className="text-sm text-gray-500">2010 - 2014</span>
+              </div>
+              <p className="text-gray-600 mb-2">本科 - 金融学（辅修法语）</p>
             </div>
           </div>
         </section>

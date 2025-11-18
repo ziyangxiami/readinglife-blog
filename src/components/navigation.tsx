@@ -58,15 +58,15 @@ export function Navigation({ className }: NavigationProps) {
   }
 
   return (
-    <nav className={cn('bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors', className)}>
+    <nav className={cn('bg-white shadow-sm border-b border-gray-200', className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-3 text-xl font-bold text-gray-900 dark:text-white">
+            <Link href="/" className="flex items-center gap-3 text-xl font-bold text-gray-900">
               <div className="w-8 h-8 relative">
                 <Image
-                  src="/logo-avatar.svg"
+                  src="/logo-avatar-new.svg"
                   alt="Reading Life Logo"
                   width={32}
                   height={32}
@@ -74,7 +74,6 @@ export function Navigation({ className }: NavigationProps) {
                   priority
                 />
               </div>
-              Reading Life
             </Link>
           </div>
 
@@ -91,8 +90,8 @@ export function Navigation({ className }: NavigationProps) {
                   className={cn(
                     'flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors',
                     isActive
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
                   <Icon className="w-4 h-4" />
@@ -102,8 +101,6 @@ export function Navigation({ className }: NavigationProps) {
             })}
             {/* 搜索框 */}
             <SearchBox />
-            {/* 暗色模式切换 */}
-            <ThemeToggleSimple />
           </div>
 
           {/* 移动端菜单按钮 */}
@@ -121,7 +118,7 @@ export function Navigation({ className }: NavigationProps) {
       {/* 移动端菜单 */}
       {isOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
@@ -134,8 +131,8 @@ export function Navigation({ className }: NavigationProps) {
                   className={cn(
                     'flex items-center gap-2 px-3 py-2 text-base font-medium rounded-md transition-colors',
                     isActive
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
                   <Icon className="w-5 h-5" />
@@ -143,10 +140,6 @@ export function Navigation({ className }: NavigationProps) {
                 </Link>
               )
             })}
-            <div className="flex items-center justify-between px-3 py-2">
-              <span className="text-gray-600 dark:text-gray-300">主题切换</span>
-              <ThemeToggleSimple />
-            </div>
           </div>
         </div>
       )}

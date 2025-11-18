@@ -18,16 +18,16 @@ export default async function HomePage() {
   ])
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-white">
       <Navigation />
       
       {/* Hero区域 - 极简设计 */}
-      <section className="relative py-16 px-4 border-b border-gray-100 dark:border-gray-800">
+      <section className="relative py-16 px-4 border-b border-gray-100">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
             <div className="w-20 h-20 mx-auto mb-6">
               <Image
-                src="/logo-avatar.svg"
+                src="/logo-avatar-new.svg"
                 alt="Reading Life"
                 width={80}
                 height={80}
@@ -35,10 +35,10 @@ export default async function HomePage() {
                 priority
               />
             </div>
-            <h1 className="text-5xl md:text-6xl font-light text-gray-900 dark:text-white mb-4">
+            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-4">
               Reading Life
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
               分享读书心得，记录学习历程，探索知识的无限可能
             </p>
           </div>
@@ -50,11 +50,11 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           {/* 文章标题区域 */}
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-light text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-light text-gray-900">
               最新文章
             </h2>
             <Link href="/blog">
-              <Button variant="ghost" className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+              <Button variant="ghost" className="flex items-center gap-2 text-gray-600">
                 查看全部
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -69,19 +69,19 @@ export default async function HomePage() {
           </div>
 
           {/* 简化的分类和标签区域 */}
-          <div className="border-t border-gray-100 dark:border-gray-800 pt-16">
+          <div className="border-t border-gray-100 pt-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               {/* 分类 - 极简展示 */}
               <div>
-                <h3 className="text-xl font-light text-gray-900 dark:text-white mb-6">
+                <h3 className="text-xl font-light text-gray-900 mb-6">
                   分类
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {categories.slice(0, 6).map((category: any) => (
                     <Link key={category.id} href={`/blog?category=${category.slug}`}>
-                      <span className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+                      <span className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
                         {category.name}
-                        <span className="text-xs text-gray-400 dark:text-gray-500">({category.post_count})</span>
+                        <span className="text-xs text-gray-400">({category.post_count})</span>
                       </span>
                     </Link>
                   ))}
@@ -90,13 +90,13 @@ export default async function HomePage() {
 
               {/* 标签 - 极简展示 */}
               <div>
-                <h3 className="text-xl font-light text-gray-900 dark:text-white mb-6">
+                <h3 className="text-xl font-light text-gray-900 mb-6">
                   标签
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {tags.slice(0, 12).map((tag: any) => (
                     <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 transition-colors">
                         <Tag className="w-3 h-3" />
                         {tag.name}
                       </span>
@@ -118,7 +118,7 @@ export default async function HomePage() {
 function ArticleCard({ post }: { post: any }) {
   return (
     <Link href={`/blog/${post.slug}`}>
-      <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer border-0 shadow-sm bg-white dark:bg-gray-800">
+      <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer border-0 shadow-sm bg-white">
         {post.cover_image && (
           <div className="relative h-48 overflow-hidden rounded-t-lg">
             <Image
@@ -130,7 +130,7 @@ function ArticleCard({ post }: { post: any }) {
           </div>
         )}
         <CardHeader className="pb-4">
-          <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+          <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               <span>{new Date(post.published_at).toLocaleDateString('zh-CN')}</span>
@@ -140,12 +140,12 @@ function ArticleCard({ post }: { post: any }) {
               <span>{post.reading_time} 分钟</span>
             </div>
           </div>
-          <CardTitle className="line-clamp-2 text-lg font-medium text-gray-900 dark:text-white">
+          <CardTitle className="line-clamp-2 text-lg font-medium text-gray-900">
             {post.title}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CardDescription className="line-clamp-3 mb-4 text-gray-600 dark:text-gray-300">
+          <CardDescription className="line-clamp-3 mb-4 text-gray-600">
             {post.content ? post.content.slice(0, 150) : post.excerpt}...
           </CardDescription>
           <div className="flex items-center justify-between">
