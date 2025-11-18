@@ -1,0 +1,38 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景圆形 -->
+  <circle cx="100" cy="100" r="98" fill="url(#gradient)" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- 装饰性光束 -->
+  <defs>
+    <radialGradient id="gradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </radialGradient>
+    
+    <!-- 半色调点效果 -->
+    <pattern id="halftone" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#FB923C" opacity="0.3"/>
+    </pattern>
+  </defs>
+  
+  <!-- 半色调背景 -->
+  <circle cx="100" cy="100" r="95" fill="url(#halftone)"/>
+  
+  <!-- 头像主体 -->
+  <g transform="translate(100, 110)">
+    <!-- 头部 -->
+    <ellipse cx="0" cy="-20" rx="25" ry="30" fill="#F3F4F6" stroke="#1F2937" stroke-width="1.5"/>
+    
+    <!-- 身体/衬衫 -->
+    <path d="M-20 10 L-15 40 L15 40 L20 10 Z" fill="#E5E7EB" stroke="#1F2937" stroke-width="1.5"/>
+    
+    <!-- 衬衫领子 -->
+    <path d="M-8 -5 L0 5 L8 -5" fill="none" stroke="#1F2937" stroke-width="1.5"/>
+    
+    <!-- 装饰性星星 -->
+    <g transform="translate(-35, -35)" opacity="0.8">
+      <path d="M0,-8 L2,-2 L8,-2 L3,2 L5,8 L0,4 L-5,8 L-3,2 L-8,-2 L-2,-2 Z" fill="#FFFFFF" stroke="#1F2937" stroke-width="1"/>
+    </g>
+    
+    <g transform="translate(35, -35)" opacity="0.8">
+      <path d="M0,-6 L1.5,-1.5 L6,-1.5 L2.25,1.5 L3.75,6 L0,3 L-3.75,6 L-2.25,1.5
