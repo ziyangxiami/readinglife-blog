@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "generate-admin-hash": "npx tsx scripts/generate-admin-hash.ts"
+    "lint": "eslint"
   },
   "dependencies": {
     "@sanity/client": "^7.12.1",
