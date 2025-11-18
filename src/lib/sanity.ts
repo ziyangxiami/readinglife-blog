@@ -6,7 +6,7 @@ export const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'demo-project-id',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2023-12-03',
-  useCdn: process.env.NODE_ENV === 'production',
+  useCdn: false, // 禁用CDN缓存以确保数据实时同步
 })
 
 // 图片URL构建器
