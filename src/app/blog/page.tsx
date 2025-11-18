@@ -107,10 +107,12 @@ export default async function BlogPage({
                               <Clock className="w-4 h-4" />
                               {post.reading_time} 分钟
                             </span>
-                            <span className="flex items-center gap-1">
-                              <User className="w-4 h-4" />
-                              {post.reading_time} 分钟阅读
-                            </span>
+                            {post.author && (
+                              <span className="flex items-center gap-1">
+                                <User className="w-4 h-4" />
+                                {post.author.name}
+                              </span>
+                            )}
                           </div>
                           <h2 className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
                             <Link href={`/blog/${post.slug}`}>

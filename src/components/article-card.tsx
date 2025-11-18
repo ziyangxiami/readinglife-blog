@@ -116,7 +116,7 @@ export function ArticleCard({
               {/* 分类和标签 */}
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 {showCategory && post.category && (
-                  <Link href={`/category/${post.category.slug}`}>
+                  <Link href={`/blog?category=${post.category.slug}`}>
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors">
                       <Folder className="w-3 h-3" />
                       {post.category.name}
@@ -128,7 +128,7 @@ export function ArticleCard({
                   <div className="flex items-center gap-1">
                     <Tag className="w-3 h-3 text-gray-400" />
                     {post.tags.slice(0, 3).map((tag) => (
-                      <Link key={tag.id} href={`/tag/${tag.slug}`}>
+                      <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
                         <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors">
                           {tag.name}
                         </span>
@@ -202,7 +202,7 @@ export function ArticleCard({
         {/* 分类和标签 */}
         <div className="flex flex-wrap items-center gap-2">
           {showCategory && post.category && (
-            <Link href={`/category/${post.category.slug}`}>
+            <Link href={`/blog?category=${post.category.slug}`}>
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors">
                 <Folder className="w-3 h-3" />
                 {post.category.name}
@@ -214,7 +214,7 @@ export function ArticleCard({
             <div className="flex items-center gap-1">
               <Tag className="w-3 h-3 text-gray-400" />
               {post.tags.slice(0, 2).map((tag) => (
-                <Link key={tag.id} href={`/tag/${tag.slug}`}>
+                <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
                   <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors">
                     {tag.name}
                   </span>

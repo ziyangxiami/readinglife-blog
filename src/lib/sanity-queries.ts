@@ -133,7 +133,8 @@ export async function getAllCategories(): Promise<Category[]> {
       slug,
       description,
       color,
-      image
+      image,
+      "post_count": count(*[_type == "blogPost" && references(^._id) && publishedAt <= now()])
     }
   `
   return sanityClient.fetch(query)
@@ -204,7 +205,8 @@ export async function getAllTags(): Promise<Tag[]> {
       _updatedAt,
       _rev,
       title,
-      slug
+      slug,
+      "post_count": count(*[_type == "blogPost" && references(^._id) && publishedAt <= now()])
     }
   `
   return sanityClient.fetch(query)

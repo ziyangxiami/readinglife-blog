@@ -66,11 +66,11 @@ export function Navigation({ className }: NavigationProps) {
             <Link href="/" className="flex items-center gap-3 text-xl font-bold text-gray-900 dark:text-white">
               <div className="w-8 h-8 relative">
                 <Image
-                  src="/logo-avatar.svg"
+                  src="/logo-avatar.jpg"
                   alt="Reading Life Logo"
                   width={32}
                   height={32}
-                  className="rounded-full"
+                  className="rounded-full object-cover"
                   priority
                 />
               </div>

@@ -27,11 +27,11 @@ export default async function HomePage() {
           <div className="mb-8">
             <div className="w-20 h-20 mx-auto mb-6">
               <Image
-                src="/logo-avatar.svg"
+                src="/logo-avatar.jpg"
                 alt="Reading Life"
                 width={80}
                 height={80}
-                className="rounded-full"
+                className="rounded-full object-cover"
                 priority
               />
             </div>
@@ -78,7 +78,7 @@ export default async function HomePage() {
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {categories.slice(0, 6).map((category: any) => (
-                    <Link key={category.id} href={`/category/${category.slug}`}>
+                    <Link key={category.id} href={`/blog?category=${category.slug}`}>
                       <span className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                         {category.name}
                         <span className="text-xs text-gray-400 dark:text-gray-500">({category.post_count})</span>
@@ -95,7 +95,7 @@ export default async function HomePage() {
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {tags.slice(0, 12).map((tag: any) => (
-                    <Link key={tag.id} href={`/tag/${tag.slug}`}>
+                    <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                         <Tag className="w-3 h-3" />
                         {tag.name}
@@ -133,7 +133,7 @@ function ArticleCard({ post }: { post: any }) {
           <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <span>{new Date(post.created_at).toLocaleDateString('zh-CN')}</span>
+              <span>{new Date(post.published_at).toLocaleDateString('zh-CN')}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />

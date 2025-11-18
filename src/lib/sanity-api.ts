@@ -81,7 +81,7 @@ function formatPost(post: any): BlogPost {
     published_at: post.publishedAt,
     featured: post.featured || false,
     reading_time: post.readingTime || 5,
-    views: Math.floor(Math.random() * 1000) + 100, // 模拟阅读数
+    views: post.view_count || post.views || 0, // 使用真实阅读数或默认值，没有则显示0
     meta_title: (post as any).metaTitle || post.title,
     meta_description: (post as any).metaDescription || post.excerpt
   }
@@ -96,7 +96,7 @@ function formatCategory(category: any) {
     description: category.description,
     color: category.color || '#3B82F6',
     image: category.image ? urlFor(category.image).url() : null,
-    post_count: Math.floor(Math.random() * 50) + 5 // 模拟文章数
+    post_count: category.post_count || 0 // 使用真实的文章数量
   }
 }
 
@@ -106,7 +106,7 @@ function formatTag(tag: any) {
     id: tag._id,
     name: tag.title,
     slug: tag.slug.current,
-    post_count: Math.floor(Math.random() * 30) + 2 // 模拟文章数
+    post_count: tag.post_count || 0 // 使用真实的文章数量
   }
 }
 
@@ -165,7 +165,11 @@ export async function getFeaturedPostsList() {
 export async function getCategories() {
   // 如果没有配置真实的Sanity项目，返回模拟数据
   if (!hasRealSanityProject) {
-    return mockCategories
+    // 计算模拟数据中每个分类的文章数量
+    return mockCategories.map(category => ({
+      ...category,
+      post_count: mockPosts.filter(post => post.category?.slug === category.slug).length
+    }))
   }
   
   try {
@@ -181,7 +185,11 @@ export async function getCategories() {
 export async function getTags() {
   // 如果没有配置真实的Sanity项目，返回模拟数据
   if (!hasRealSanityProject) {
-    return mockTags
+    // 计算模拟数据中每个标签的文章数量
+    return mockTags.map(tag => ({
+      ...tag,
+      post_count: mockPosts.filter(post => post.tags?.some((t: any) => t.slug === tag.slug)).length
+    }))
   }
   
   try {
