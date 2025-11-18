@@ -101,7 +101,7 @@ export default async function BlogPage({
                           <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              {new Date(post.created_at).toLocaleDateString('zh-CN')}
+                              {post.published_at ? new Date(post.published_at).toLocaleDateString('zh-CN') : '日期未知'}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />
