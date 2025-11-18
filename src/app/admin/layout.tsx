@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react"
 import { Navigation } from '@/components/navigation'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 /**
  * 管理员布局组件
@@ -15,8 +17,15 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const { data: session, status } = useSession()
+  const router = useRouter()
   
   console.log("[AdminLayout] 当前状态:", { status, session: !!session, role: session?.user?.role })
+  
+  // 添加调试信息
+  useEffect(() => {
+    console.log("[AdminLayout] 组件挂载完成")
+    return () => console.log("[AdminLayout] 组件卸载")
+  }, [])
 
   // 加载状态
   if (status === "loading") {
@@ -41,13 +50,17 @@ export default function AdminLayout({
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">需要管理员权限</h2>
             <p className="text-gray-600 mb-6">您需要登录管理员账户才能访问此页面</p>
-            <Link 
-              href="/admin/login"
-              replace  // 使用replace而不是push
-              className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            <button
+              onClick={() => {
+                console.log("[AdminLayout] 点击前往登录页面")
+                // 使用window.location直接跳转，绕过Next.js路由问题
+                window.location.href = "/admin/login"
+              }}
+              className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+              type="button"
             >
               前往登录页面
-            </Link>
+            </button>
           </div>
         </div>
       </div>
