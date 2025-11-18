@@ -68,7 +68,7 @@ export function getPostSEO(post: {
   created_at: string
   updated_at: string
 }): Metadata {
-  const excerpt = post.content.slice(0, 200).replace(/[#*`\[\]()]/g, '')
+  const excerpt = post.content ? post.content.slice(0, 200).replace(/[#*`\[\]()]/g, '') : ''
   const imageUrl = post.cover_image || 'https://readinglife.fun/default-post-image.jpg'
   
   return {

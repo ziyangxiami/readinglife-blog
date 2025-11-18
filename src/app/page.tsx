@@ -156,7 +156,7 @@ function ArticleCard({ post }: { post: any }) {
         </CardHeader>
         <CardContent>
           <CardDescription className="line-clamp-3 mb-4">
-            {post.content.slice(0, 150)}...
+            {post.content ? post.content.slice(0, 150) : post.excerpt}...
           </CardDescription>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

@@ -96,7 +96,7 @@ ${posts.map(post => `    <item>
       <title><![CDATA[${post.title}]]></title>
       <link>https://readinglife.fun/blog/${post.slug}</link>
       <guid>https://readinglife.fun/blog/${post.slug}</guid>
-      <description><![CDATA[${post.content.slice(0, 500)}...]]></description>
+      <description><![CDATA[${post.content ? post.content.slice(0, 500) : post.excerpt}...]]></description>
       <pubDate>${new Date(post.created_at).toUTCString()}</pubDate>
     </item>`).join('\n')}
   </channel>

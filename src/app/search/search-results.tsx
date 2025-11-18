@@ -177,7 +177,7 @@ export function SearchResults() {
                     </Link>
                   </h2>
                   <p className="text-gray-600 mb-4 line-clamp-3">
-                    {post.excerpt || post.content.slice(0, 200)}...
+                    {post.excerpt || (post.content ? post.content.slice(0, 200) : '暂无内容')}...
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

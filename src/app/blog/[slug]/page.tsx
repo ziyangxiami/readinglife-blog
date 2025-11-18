@@ -321,10 +321,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return {
     title: `${post.title} - Reading Life`,
-    description: post.excerpt || post.content.slice(0, 160),
+    description: post.excerpt || (post.content ? post.content.slice(0, 160) : ''),
     openGraph: {
       title: post.title,
-      description: post.excerpt || post.content.slice(0, 160),
+      description: post.excerpt || (post.content ? post.content.slice(0, 160) : ''),
       images: [post.cover_image || '/og-image.jpg'],
       type: 'article',
       publishedTime: post.created_at,
@@ -333,7 +333,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt || post.content.slice(0, 160),
+      description: post.excerpt || (post.content ? post.content.slice(0, 160) : ''),
       images: [post.cover_image || '/twitter-image.jpg']
     }
   }
