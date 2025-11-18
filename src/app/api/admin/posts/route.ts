@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withAdminAuth } from '@/lib/admin-auth'
+import { withAdminAuth } from '@/lib/api-auth'
 import { supabase } from '@/lib/supabase'
 
 /**
@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
  * 支持分页和筛选
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (req, session) => {
     try {
       const { searchParams } = new URL(request.url)
       const page = parseInt(searchParams.get('page') || '1')
@@ -82,5 +82,5 @@ export async function GET(request: NextRequest) {
         message: '服务器错误'
       }, { status: 500 })
     }
-  })(request)
+  }, request)
 }

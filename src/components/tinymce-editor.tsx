@@ -4,6 +4,8 @@ import { useRef, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import { Button } from '@/components/ui/button'
 import { Save } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 interface TinymceEditorProps {
   value: string
@@ -24,12 +26,13 @@ export default function TinymceEditor({
   onChange,
   height = 500,
   placeholder = '开始写作...',
-  autoSave = true,
-  autoSaveInterval = 30000, // 30秒
+  autoSave = false,
+  autoSaveInterval = 30000,
   onAutoSave
 }: TinymceEditorProps) {
   const editorRef = useRef<any>(null)
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const { data: session } = useSession()
 
   // 自动保存逻辑
   useEffect(() => {
@@ -60,10 +63,15 @@ export default function TinymceEditor({
       const xhr = new XMLHttpRequest()
       xhr.open('POST', '/api/admin/upload', true)
       
-      // 添加认证头 - 从localStorage获取token
-      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
-      if (token) {
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+      // 使用NextAuth.js会话token
+      if (session?.user?.role === 'admin') {
+        // NextAuth.js使用cookie认证，这里不需要手动添加header
+        // 浏览器会自动携带cookie
+        console.log("[Editor] 使用管理员会话上传图片")
+      } else {
+        console.error("[Editor] 未找到管理员会话")
+        reject(new Error('未登录管理员账户'))
+        return
       }
       
       xhr.upload.onprogress = (e) => {
@@ -75,21 +83,28 @@ export default function TinymceEditor({
           try {
             const response = JSON.parse(xhr.responseText)
             if (response.success && response.data?.url) {
+              console.log("[Editor] 图片上传成功")
               resolve(response.data.url)
             } else {
-              reject(new Error('上传失败'))
+              console.error("[Editor] 图片上传失败:", response)
+              reject(new Error(response.message || '上传失败'))
             }
           } catch (e) {
+            console.error("[Editor] 解析响应失败:", e)
             reject(new Error('解析响应失败'))
           }
         } else if (xhr.status === 401) {
+          console.error("[Editor] 未授权上传")
+          toast.error('未授权：请先登录管理员账户')
           reject(new Error('未授权：请先登录管理员账户'))
         } else {
-          reject(new Error('上传失败'))
+          console.error("[Editor] 上传失败，状态码:", xhr.status)
+          reject(new Error(`上传失败 (状态码: ${xhr.status})`))
         }
       }
 
       xhr.onerror = () => {
+        console.error("[Editor] 网络错误")
         reject(new Error('网络错误'))
       }
 
@@ -102,7 +117,9 @@ export default function TinymceEditor({
   const handleManualSave = () => {
     if (editorRef.current && onAutoSave) {
       const content = editorRef.current.getContent()
+      console.log("[Editor] 手动保存内容")
       onAutoSave(content)
+      toast.success('内容已保存')
     }
   }
 

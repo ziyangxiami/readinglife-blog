@@ -1,107 +1,169 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Loader2, LogIn, User, Lock } from 'lucide-react'
+import { toast } from 'sonner'
 
 /**
  * 管理员登录页面
- * 提供JWT令牌认证，保护管理后台访问
+ * 使用NextAuth.js进行身份验证
  */
 export default function AdminLoginPage() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setLoading(true)
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      console.log("[Auth] 开始登录流程")
+      
+      const result = await signIn('credentials', {
+        username: formData.username,
+        password: formData.password,
+        redirect: false, // 手动处理重定向
       })
 
-      const data = await response.json()
+      console.log("[Auth] 登录结果:", result)
 
-      if (response.ok && data.success) {
-        // 保存token到localStorage
-        localStorage.setItem('admin_token', data.data.token)
-        // 跳转到管理后台首页
-        router.push('/admin')
-      } else {
-        setError(data.message || '登录失败')
+      if (result?.error) {
+        console.error("[Auth] 登录失败:", result.error)
+        setError(result.error)
+        toast.error("登录失败: " + result.error)
+      } else if (result?.ok) {
+        console.log("[Auth] 登录成功，准备跳转")
+        toast.success("登录成功！")
+        
+        // 延迟跳转，确保用户看到成功消息
+        setTimeout(() => {
+          router.push('/admin')
+          router.refresh() // 刷新页面状态
+        }, 1000)
       }
-    } catch (err) {
-      setError('网络错误，请重试')
+    } catch (error) {
+      console.error("[Auth] 登录过程出错:", error)
+      setError("登录过程出错，请稍后重试")
+      toast.error("登录过程出错")
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // 清除错误状态
+    if (error) setError(null)
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4 py-8">
+      <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">管理员登录</CardTitle>
+          <div className="flex items-center justify-center mb-4">
+            <div className="p-3 bg-blue-100 rounded-full">
+              <LogIn className="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-center">管理员登录</CardTitle>
           <CardDescription className="text-center">
-            输入管理员账户信息以访问管理后台
+            请输入您的管理员凭据
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="mb-4">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="username">用户名</Label>
+              <Label htmlFor="username">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  用户名
+                </div>
+              </Label>
               <Input
                 id="username"
+                name="username"
                 type="text"
                 placeholder="请输入用户名"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={handleInputChange}
+                disabled={isLoading}
                 required
-                disabled={loading}
+                className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">密码</Label>
+              <Label htmlFor="password">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  密码
+                </div>
+              </Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="请输入密码"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleInputChange}
+                disabled={isLoading}
                 required
-                disabled={loading}
+                className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            
+          </CardContent>
+          
+          <CardFooter className="flex flex-col space-y-4">
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? '登录中...' : '登录'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  登录中...
+                </>
+              ) : (
+                <>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  登录
+                </>
+              )}
             </Button>
-          </form>
-        </CardContent>
+            
+            <div className="text-center text-sm text-gray-500">
+              <Link href="/" className="text-blue-600 hover:underline">
+                返回首页
+              </Link>
+            </div>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   )

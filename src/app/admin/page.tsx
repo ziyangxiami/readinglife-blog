@@ -1,20 +1,29 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { BookOpen, Users, MessageSquare, TrendingUp, Edit, Plus, Settings } from 'lucide-react'
+import { BookOpen, Users, MessageSquare, TrendingUp, Edit, Plus, Settings, LogOut, User } from 'lucide-react'
 import Link from 'next/link'
 import { AdminNav } from '@/components/admin-nav'
 import { getBlogStats } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
+import { getCurrentSession } from '@/lib/session'
+import { signOut } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
-/**
- * 管理后台主页面
- * 提供文章管理、评论管理、统计信息等功能的入口
- */
 /**
  * 管理后台主页面
  * 集成侧边导航与真实统计数据
  */
 export default async function AdminDashboardPage() {
+  // 验证管理员权限
+  const session = await getCurrentSession()
+  
+  if (!session || session.user?.role !== "admin") {
+    console.error("[Auth] 非管理员用户访问后台")
+    redirect("/admin/login")
+  }
+  
+  console.log("[Auth] 管理员访问后台:", session.user?.username)
+
   // 获取基础博客统计
   const blogStats = await getBlogStats()
 
@@ -98,10 +107,46 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* 页面标题 */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">管理后台</h1>
-        <p className="text-gray-600 mt-2">欢迎回来，管理员</p>
+      {/* 页面标题和用户信息 */}
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">管理后台</h1>
+          <p className="text-gray-600 mt-2">欢迎回来，{session.user?.name || '管理员'}</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <User className="w-4 h-4" />
+            <span>{session.user?.username}</span>
+          </div>
+          <form
+            action={async () => {
+              'use server'
+              // 服务端退出处理
+              console.log("[Auth] 管理员退出登录")
+            }}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={async () => {
+                'use client'
+                try {
+                  console.log("[Auth] 开始退出登录")
+                  await signOut({ redirect: false })
+                  console.log("[Auth] 退出成功")
+                  // 客户端跳转
+                  window.location.href = '/admin/login'
+                } catch (error) {
+                  console.error("[Auth] 退出失败:", error)
+                }
+              }}
+            >
+              <LogOut className="w-4 h-4" />
+              退出登录
+            </Button>
+          </form>
+        </div>
       </div>
 
       {/* 统计卡片 */}
