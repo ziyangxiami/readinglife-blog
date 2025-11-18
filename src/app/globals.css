@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 自定义工具类 */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* 响应式文本截断 */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
+  /* 平滑滚动 */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+  
+  /* 触摸优化 */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 自定义组件样式 */
+@layer components {
+  /* 卡片悬停效果 */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  /* 按钮触摸优化 */
+  .btn-touch {
+    @apply min-h-[44px] min-w-[44px] touch-manipulation;
+  }
+  
+  /* 响应式容器 */
+  .container-responsive {
+    @apply w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+  
+  /* 移动端优化文本 */
+  .text-mobile {
+    @apply text-sm sm:text-base;
+  }
+  
+  /* 网格布局 */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+}
+
+/* Markdown样式优化 */
+.prose {
+  max-width: none;
+}
+
+.prose h1 {
+  @apply text-3xl sm:text-4xl font-bold mb-6 mt-8;
+}
+
+.prose h2 {
+  @apply text-2xl sm:text-3xl font-semibold mb-4 mt-6;
+}
+
+.prose h3 {
+  @apply text-xl sm:text-2xl font-medium mb-3 mt-4;
+}
+
+.prose p {
+  @apply leading-relaxed mb-4 text-sm sm:text-base;
+}
+
+.prose ul, .prose ol {
+  @apply mb-4 space-y-2;
+}
+
+.prose li {
+  @apply text-sm sm:text-base;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-blue-500 pl-4 italic my-4 text-gray-700;
+}
+
+.prose code {
+  @apply bg-gray-100 px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.prose pre {
+  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+
+.prose img {
+  @apply rounded-lg shadow-md my-6 max-w-full h-auto;
+}
+
+.prose a {
+  @apply text-blue-600 hover:underline;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .prose h1 {
+    @apply text-2xl;
+  }
+  
+  .prose h2 {
+    @apply text-xl;
+  }
+  
+  .prose h3 {
+    @apply text-lg;
+  }
+  
+  .prose p {
+    @apply text-sm;
+  }
+  
+  .prose pre {
+    @apply p-3 text-sm;
+  }
+  
+  .prose blockquote {
+    @apply pl-3;
+  }
+}

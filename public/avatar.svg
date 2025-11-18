@@ -1,0 +1,41 @@
+<!-- 这是一个简单的SVG头像 -->
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <circle cx="100" cy="100" r="100" fill="url(#gradient)"/>
+  
+  <!-- 渐变定义 -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 头部轮廓 -->
+  <ellipse cx="100" cy="140" rx="45" ry="50" fill="#FBBF24" opacity="0.9"/>
+  
+  <!-- 脸部 -->
+  <ellipse cx="100" cy="135" rx="40" ry="45" fill="#FDE68A"/>
+  
+  <!-- 头发 -->
+  <path d="M 60 110 Q 100 80 140 110 Q 135 100 130 95 Q 120 85 110 90 Q 105 85 100 90 Q 95 85 90 90 Q 80 85 70 95 Q 65 100 60 110" fill="#1F2937"/>
+  
+  <!-- 眼睛 -->
+  <ellipse cx="85" cy="125" rx="3" ry="4" fill="#1F2937"/>
+  <ellipse cx="115" cy="125" rx="3" ry="4" fill="#1F2937"/>
+  
+  <!-- 眉毛 -->
+  <path d="M 78 120 Q 85 117 92 120" stroke="#1F2937" stroke-width="2" fill="none"/>
+  <path d="M 108 120 Q 115 117 122 120" stroke="#1F2937" stroke-width="2" fill="none"/>
+  
+  <!-- 鼻子 -->
+  <path d="M 100 130 L 97 138 L 103 138 Z" fill="#F59E0B" opacity="0.6"/>
+  
+  <!-- 嘴巴 -->
+  <path d="M 90 145 Q 100 150 110 145" stroke="#DC2626" stroke-width="2" fill="none"/>
+  
+  <!-- 文字 -->
+  <text x="100" y="180" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial, sans-serif">
+    Reading Life
+  </text>
+</svg>

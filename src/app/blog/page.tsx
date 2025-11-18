@@ -1,0 +1,239 @@
+import { getPosts, getCategories, getTags } from '@/lib/api'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Calendar, Clock, User, Tag, Folder, Search } from 'lucide-react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Navigation } from '@/components/navigation'
+import { SearchBox } from '@/components/search-box'
+
+/**
+ * 文章列表页面
+ * 展示所有文章，支持分类和标签筛选
+ */
+export default async function BlogPage({
+  searchParams
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const page = parseInt(searchParams.page as string) || 1
+  const category = searchParams.category as string
+  const tag = searchParams.tag as string
+  const search = searchParams.search as string
+
+  const [{ posts, total, totalPages }, categories, tags] = await Promise.all([
+    getPosts(page, 10, category, tag, search),
+    getCategories(),
+    getTags()
+  ])
+
+  const currentCategory = category ? categories.find(c => c.slug === category) : null
+  const currentTag = tag ? tags.find(t => t.slug === tag) : null
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <Navigation />
+      
+      {/* 页面标题 */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            {search ? `搜索结果: "${search}"` : currentCategory ? currentCategory.name : currentTag ? currentTag.name : '所有文章'}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {search ? `找到 ${total} 篇相关文章` : currentCategory ? currentCategory.description : currentTag ? `标签 "${currentTag.name}" 下的文章` : '分享读书心得，记录学习历程'}
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 pb-16">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* 主内容区 */}
+          <main className="flex-1">
+            {/* 搜索框 */}
+            <div className="mb-8">
+              <SearchBox />
+            </div>
+
+            {/* 文章列表 */}
+            {posts.length === 0 ? (
+              <div className="text-center py-12">
+                <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">没有找到文章</h3>
+                <p className="text-gray-600 mb-6">
+                  {search ? '尝试其他关键词搜索' : '该分类下暂无文章'}
+                </p>
+                <Link href="/blog">
+                  <Button>查看所有文章</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {posts.map((post: any) => (
+                  <article key={post.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div className="p-6">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {post.cover_image && (
+                          <div className="md:w-48 h-32 flex-shrink-0">
+                            <Image
+                              src={post.cover_image}
+                              alt={post.title}
+                              width={192}
+                              height={128}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {new Date(post.created_at).toLocaleDateString('zh-CN')}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {post.reading_time} 分钟
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              {post.view_count} 次阅读
+                            </span>
+                          </div>
+                          <h2 className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                            <Link href={`/blog/${post.slug}`}>
+                              {post.title}
+                            </Link>
+                          </h2>
+                          <p className="text-gray-600 mb-4 line-clamp-3">
+                            {post.excerpt || post.content.slice(0, 200)}...
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {post.category && (
+                                <Link href={`/blog?category=${post.category.slug}`}>
+                                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs hover:bg-blue-100 transition-colors">
+                                    <Folder className="w-3 h-3" />
+                                    {post.category.name}
+                                  </span>
+                                </Link>
+                              )}
+                              {post.tags && post.tags.length > 0 && (
+                                <div className="flex items-center gap-1">
+                                  {post.tags.slice(0, 3).map((tag: any) => (
+                                    <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
+                                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-gray-600 rounded text-xs hover:bg-gray-100 transition-colors">
+                                        <Tag className="w-3 h-3" />
+                                        {tag.name}
+                                      </span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <Link href={`/blog/${post.slug}`}>
+                              <Button variant="outline" size="sm">
+                                阅读全文
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+
+            {/* 分页 */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                <Link href={`/blog?page=${Math.max(1, page - 1)}${category ? `&category=${category}` : ''}${tag ? `&tag=${tag}` : ''}${search ? `&search=${search}` : ''}`}>
+                  <Button variant="outline" disabled={page <= 1}>
+                    上一页
+                  </Button>
+                </Link>
+                
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <Link
+                      key={pageNum}
+                      href={`/blog?page=${pageNum}${category ? `&category=${category}` : ''}${tag ? `&tag=${tag}` : ''}${search ? `&search=${search}` : ''}`}
+                    >
+                      <Button
+                        variant={pageNum === page ? "default" : "outline"}
+                        size="sm"
+                      >
+                        {pageNum}
+                      </Button>
+                    </Link>
+                  ))}
+                </div>
+
+                <Link href={`/blog?page=${Math.min(totalPages, page + 1)}${category ? `&category=${category}` : ''}${tag ? `&tag=${tag}` : ''}${search ? `&search=${search}` : ''}`}>
+                  <Button variant="outline" disabled={page >= totalPages}>
+                    下一页
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </main>
+
+          {/* 侧边栏 */}
+          <aside className="lg:w-80">
+            {/* 分类 */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Folder className="w-5 h-5" />
+                  文章分类
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {categories.map((category: any) => (
+                    <Link
+                      key={category.id}
+                      href={`/blog?category=${category.slug}`}
+                      className={`flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors ${
+                        currentCategory?.id === category.id ? 'bg-blue-50 text-blue-700' : ''
+                      }`}
+                    >
+                      <span>{category.name}</span>
+                      <span className="text-sm text-gray-500">({category.post_count})</span>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 热门标签 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Tag className="w-5 h-5" />
+                  热门标签
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {tags.slice(0, 15).map((tag: any) => (
+                    <Link key={tag.id} href={`/blog?tag=${tag.slug}`}>
+                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+                        currentTag?.id === tag.id 
+                          ? 'bg-blue-100 text-blue-700' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}>
+                        {tag.name}
+                        <span className="text-gray-500">({tag.post_count})</span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
+      </div>
+    </div>
+  )
+}
