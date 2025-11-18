@@ -1,4 +1,4 @@
-import { getPosts, getCategories, getTags } from '@/lib/api'
+import { getAllPosts, getAllCategories, getAllTags } from '@/lib/sanity-queries'
 
 /**
  * 生成网站地图
@@ -9,13 +9,11 @@ export async function generateSitemap() {
   
   try {
     // 获取所有数据
-    const [postsResult, categories, tags] = await Promise.all([
-      getPosts(1, 1000), // 获取所有文章
-      getCategories(),
-      getTags()
+    const [posts, categories, tags] = await Promise.all([
+      getAllPosts(), // 获取所有文章
+      getAllCategories(),
+      getAllTags()
     ])
-
-    const posts = postsResult.posts
 
     // 基础URL
     const urls = [
@@ -28,8 +26,8 @@ export async function generateSitemap() {
     // 文章URL
     posts.forEach(post => {
       urls.push({
-        url: `/blog/${post.slug}`,
-        lastModified: post.updated_at,
+        url: `/blog/${post.slug.current}`,
+        lastModified: post._updatedAt,
         priority: 0.7
       })
     })
@@ -37,7 +35,7 @@ export async function generateSitemap() {
     // 分类URL
     categories.forEach(category => {
       urls.push({
-        url: `/category/${category.slug}`,
+        url: `/category/${category.slug.current}`,
         lastModified: new Date().toISOString(),
         priority: 0.6
       })
@@ -46,7 +44,7 @@ export async function generateSitemap() {
     // 标签URL
     tags.forEach(tag => {
       urls.push({
-        url: `/tag/${tag.slug}`,
+        url: `/tag/${tag.slug.current}`,
         lastModified: new Date().toISOString(),
         priority: 0.5
       })
@@ -81,7 +79,30 @@ ${urls.map(url => `  <url>
  * 生成RSS Feed
  */
 export async function generateRSSFeed() {
-  const { posts } = await getPosts(1, 20) // 最新的20篇文章
+  const posts = await getAllPosts() // 获取所有文章
+  
+  // 提取文本摘要函数
+  const extractTextFromPortableText = (content: any[]): string => {
+    if (!content || !Array.isArray(content)) return ''
+    
+    let text = ''
+    const extractText = (blocks: any[]) => {
+      for (const block of blocks) {
+        if (typeof block === 'object' && block !== null) {
+          if (block._type === 'block' && block.children) {
+            for (const child of block.children) {
+              if (child.text) {
+                text += child.text + ' '
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    extractText(content)
+    return text.trim().slice(0, 500)
+  }
   
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -92,13 +113,17 @@ export async function generateRSSFeed() {
     <language>zh-CN</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="https://readinglife.fun/rss.xml" rel="self" type="application/rss+xml" />
-${posts.map(post => `    <item>
+${posts.slice(0, 20).map(post => {
+  const description = post.excerpt || extractTextFromPortableText(post.content as any[]) || ''
+  const pubDate = new Date(post.publishedAt || post._createdAt).toUTCString()
+  return `    <item>
       <title><![CDATA[${post.title}]]></title>
-      <link>https://readinglife.fun/blog/${post.slug}</link>
-      <guid>https://readinglife.fun/blog/${post.slug}</guid>
-      <description><![CDATA[${post.content ? post.content.slice(0, 500) : post.excerpt}...]]></description>
-      <pubDate>${new Date(post.created_at).toUTCString()}</pubDate>
-    </item>`).join('\n')}
+      <link>https://readinglife.fun/blog/${post.slug.current}</link>
+      <guid>https://readinglife.fun/blog/${post.slug.current}</guid>
+      <description><![CDATA[${description}...]]></description>
+      <pubDate>${pubDate}</pubDate>
+    </item>`
+}).join('\n')}
   </channel>
 </rss>`
 

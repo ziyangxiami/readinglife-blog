@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createComment } from '@/lib/api'
+
+// 简单的内存存储（注意：这不会持久化，仅用于演示）
+// TODO: 需要创建Sanity评论模式并更新此API
+const comments = new Map<string, any[]>()
 
 /**
  * 创建评论API
+ * 注意：当前使用内存存储，需要迁移到Sanity
  */
 export async function POST(request: NextRequest) {
   try {
@@ -46,13 +50,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const comment = await createComment({
+    // 创建评论对象
+    const comment = {
+      id: Date.now().toString(),
       post_id,
       author_name: author_name.trim(),
       author_email: author_email.trim(),
       content: content.trim(),
-      parent_id: parent_id || undefined
-    })
+      parent_id: parent_id || null,
+      created_at: new Date().toISOString(),
+      status: 'pending' // 默认待审核状态
+    }
+
+    // 存储评论（内存中）
+    if (!comments.has(post_id)) {
+      comments.set(post_id, [])
+    }
+    comments.get(post_id)!.push(comment)
 
     return NextResponse.json({
       success: true,

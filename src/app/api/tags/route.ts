@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
-import { getTags } from '@/lib/api'
+import { getAllTags } from '@/lib/sanity-queries'
 
 /**
  * 获取标签列表API
+ * 使用 Sanity 作为数据源
  */
 export async function GET() {
   try {
-    const tags = await getTags()
+    const tags = await getAllTags()
     
     return NextResponse.json({
       success: true,

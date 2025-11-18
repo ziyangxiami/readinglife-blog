@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
-import { getCategories } from '@/lib/api'
+import { getAllCategories } from '@/lib/sanity-queries'
 
 /**
  * 获取分类列表API
+ * 使用 Sanity 作为数据源
  */
 export async function GET() {
   try {
-    const categories = await getCategories()
+    const categories = await getAllCategories()
     
     return NextResponse.json({
       success: true,

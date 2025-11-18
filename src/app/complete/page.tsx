@@ -13,8 +13,8 @@ export default function CompletePage() {
       status: 'completed'
     },
     {
-      title: '数据库配置',
-      description: 'Supabase数据库表结构和初始化数据配置完成',
+      title: 'Sanity CMS配置',
+      description: 'Sanity内容管理系统配置完成',
       status: 'completed'
     },
     {
@@ -87,7 +87,7 @@ export default function CompletePage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">技术栈</h3>
-                <p className="text-gray-600">Next.js 14 + React 18 + Tailwind CSS + Supabase</p>
+                <p className="text-gray-600">Next.js 15 + React 19 + Tailwind CSS + Sanity</p>
               </div>
             </div>
             
@@ -127,22 +127,22 @@ export default function CompletePage() {
           
           <div className="space-y-4">
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-2">1. 配置Supabase</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">1. 配置Sanity</h3>
               <p className="text-blue-800 text-sm mb-2">
-                在.env.local文件中填写您的Supabase配置信息
+                在.env.local文件中填写您的Sanity配置信息
               </p>
               <code className="text-xs bg-blue-100 px-2 py-1 rounded">
-                NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+                NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
               </code>
             </div>
             
             <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h3 className="font-semibold text-green-900 mb-2">2. 设置数据库</h3>
+              <h3 className="font-semibold text-green-900 mb-2">2. 设置内容</h3>
               <p className="text-green-800 text-sm mb-2">
-                在Supabase控制台中执行数据库迁移脚本
+                通过Sanity Studio创建和管理内容
               </p>
               <code className="text-xs bg-green-100 px-2 py-1 rounded">
-                supabase/migrations/001_initial_schema.sql
+                访问 /admin 进入Sanity Studio
               </code>
             </div>
             
@@ -172,7 +172,7 @@ export default function CompletePage() {
             🎊 恭喜！您已成功创建了完整的个人博客网站！
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            基于Next.js 14 + React 18 + Tailwind CSS + Supabase
+            基于Next.js 15 + React 19 + Tailwind CSS + Sanity
           </p>
         </div>
       </div>

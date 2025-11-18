@@ -1,49 +1,53 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { testDatabaseConnection, initializeDatabaseData } from '@/lib/db-test'
+import { CheckCircle, Info } from 'lucide-react'
 
 /**
- * 数据库初始化测试页面
- * 用于测试Supabase连接并初始化数据
+ * 数据库初始化页面（已迁移到 Sanity）
+ * 
+ * 注意：此页面已从 Supabase 迁移到 Sanity
+ * 项目现在使用 Sanity Studio 进行内容管理
  */
 export default function DatabaseInitPage() {
-  const [testResult, setTestResult] = useState<any>(null)
-  const [initResult, setInitResult] = useState<any>(null)
+  const [sanityStatus, setSanityStatus] = useState<any>(null)
   const [loading, setLoading] = useState(false)
-  const [initLoading, setInitLoading] = useState(false)
 
-  const handleTestConnection = async () => {
+  const checkSanityConnection = async () => {
     setLoading(true)
     try {
-      const result = await testDatabaseConnection()
-      setTestResult(result)
-      console.log('数据库测试结果:', result)
+      // 简单的 Sanity 连接测试
+      // 在实际项目中，这里应该调用 Sanity API 来验证连接
+      const response = await fetch('/api/sanity-test')
+      
+      if (response.ok) {
+        setSanityStatus({ 
+          success: true, 
+          message: 'Sanity 连接正常',
+          details: '可以通过 Sanity Studio 管理内容'
+        })
+      } else {
+        setSanityStatus({ 
+          success: false, 
+          message: 'Sanity 连接测试失败',
+          details: '请检查环境变量配置'
+        })
+      }
     } catch (error) {
-      console.error('测试失败:', error)
-      setTestResult({ success: false, error: error instanceof Error ? error.message : String(error) })
+      console.error('Sanity 连接测试失败:', error)
+      setSanityStatus({ 
+        success: false, 
+        message: 'Sanity 连接测试失败',
+        details: error instanceof Error ? error.message : '未知错误'
+      })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInitializeData = async () => {
-    setInitLoading(true)
-    try {
-      const result = await initializeDatabaseData()
-      setInitResult(result)
-      console.log('数据初始化结果:', result)
-    } catch (error) {
-      console.error('初始化失败:', error)
-      setInitResult({ success: false, error: error instanceof Error ? error.message : String(error) })
-    } finally {
-      setInitLoading(false)
-    }
-  }
-
   useEffect(() => {
     // 页面加载时自动测试连接
-    handleTestConnection()
+    checkSanityConnection()
   }, [])
 
   return (
@@ -51,17 +55,30 @@ export default function DatabaseInitPage() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            数据库初始化测试
+            系统状态检查
           </h1>
 
-          {/* 连接测试部分 */}
+          {/* 系统迁移通知 */}
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-blue-800 mb-1">系统已升级</h3>
+                <p className="text-blue-700 text-sm">
+                  项目已从 Supabase 迁移到 Sanity CMS。现在您可以通过 Sanity Studio 管理所有内容。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sanity 连接测试 */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">
-                数据库连接测试
+                Sanity 连接状态
               </h2>
               <button
-                onClick={handleTestConnection}
+                onClick={checkSanityConnection}
                 disabled={loading}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -69,108 +86,27 @@ export default function DatabaseInitPage() {
               </button>
             </div>
 
-            {testResult && (
+            {sanityStatus && (
               <div className={`p-4 rounded-md ${
-                testResult.success 
+                sanityStatus.success 
                   ? 'bg-green-50 border border-green-200' 
                   : 'bg-red-50 border border-red-200'
               }`}>
-                {testResult.success ? (
-                  <div>
-                    <p className="text-green-800 font-medium mb-2">✅ 数据库连接成功</p>
-                    
-                    {testResult.results && (
-                      <div className="mt-4">
-                        <h3 className="font-medium text-gray-700 mb-2">表状态:</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                          {Object.entries(testResult.results).map(([table, result]) => {
-                            const typedResult = result as { success: boolean; count?: number }
-                            return (
-                              <div key={table} className={`p-2 rounded text-sm ${
-                                typedResult.success 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-red-100 text-red-800'
-                              }`}>
-                                {table}: {typedResult.success ? '✅ 正常' : '❌ 错误'}
-                                {typedResult.success && typedResult.count !== undefined && (
-                                  <span className="ml-1">({typedResult.count}条记录)</span>
-                                )}
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {testResult.categories && testResult.categories.length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="font-medium text-gray-700 mb-2">分类数据:</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {testResult.categories.map((category: { id: string; name: string }) => (
-                            <span key={category.id} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
-                              {category.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {testResult.tags && testResult.tags.length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="font-medium text-gray-700 mb-2">标签数据:</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {testResult.tags.map((tag: { id: string; name: string }) => (
-                            <span key={tag.id} className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm">
-                              {tag.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                {sanityStatus.success ? (
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                    <div>
+                      <p className="text-green-800 font-medium">✅ {sanityStatus.message}</p>
+                      {sanityStatus.details && (
+                        <p className="text-green-600 mt-1 text-sm">{sanityStatus.details}</p>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-red-800 font-medium">❌ 数据库连接失败</p>
-                    {testResult.error && (
-                      <p className="text-red-600 mt-2 text-sm">{testResult.error}</p>
-                    )}
-                    {testResult.details && (
-                      <p className="text-red-600 mt-1 text-sm">{testResult.details}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* 数据初始化部分 */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">
-                数据初始化
-              </h2>
-              <button
-                onClick={handleInitializeData}
-                disabled={initLoading}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {initLoading ? '初始化中...' : '初始化数据'}
-              </button>
-            </div>
-
-            {initResult && (
-              <div className={`p-4 rounded-md ${
-                initResult.success 
-                  ? 'bg-green-50 border border-green-200' 
-                  : 'bg-red-50 border border-red-200'
-              }`}>
-                {initResult.success ? (
-                  <p className="text-green-800 font-medium">✅ 数据初始化成功</p>
-                ) : (
-                  <div>
-                    <p className="text-red-800 font-medium">❌ 数据初始化失败</p>
-                    {initResult.error && (
-                      <p className="text-red-600 mt-2 text-sm">{initResult.error}</p>
+                    <p className="text-red-800 font-medium">❌ {sanityStatus.message}</p>
+                    {sanityStatus.details && (
+                      <p className="text-red-600 mt-2 text-sm">{sanityStatus.details}</p>
                     )}
                   </div>
                 )}
@@ -182,11 +118,25 @@ export default function DatabaseInitPage() {
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
             <h3 className="font-medium text-blue-800 mb-2">使用说明:</h3>
             <ul className="text-blue-700 text-sm space-y-1">
-              <li>• 页面加载时会自动测试数据库连接</li>
-              <li>• 如果连接失败，请检查环境变量配置</li>
-              <li>• 如果表不存在，需要在Supabase控制台运行SQL迁移脚本</li>
-              <li>• 点击"初始化数据"可以插入初始的分类和标签数据</li>
+              <li>• 项目已迁移到 Sanity，内容管理更加便捷</li>
+              <li>• 访问 <code className="bg-blue-100 px-1 rounded">/admin</code> 进入 Sanity Studio</li>
+              <li>• 在 Sanity Studio 中可以创建和管理文章、分类、标签等内容</li>
+              <li>• 确保在 .env.local 文件中配置了正确的 Sanity 环境变量</li>
             </ul>
+          </div>
+
+          {/* 下一步操作 */}
+          <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-md">
+            <h3 className="font-medium text-green-800 mb-2">下一步:</h3>
+            <p className="text-green-700 text-sm mb-2">
+              开始使用 Sanity Studio 创建您的第一篇博客文章！
+            </p>
+            <a 
+              href="/admin" 
+              className="inline-block px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
+            >
+              进入 Sanity Studio
+            </a>
           </div>
         </div>
       </div>
