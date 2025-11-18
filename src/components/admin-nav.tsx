@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { BookOpen, Edit, MessageSquare, Settings, BarChart3, Home } from 'lucide-react'
+import { BookOpen, Edit, MessageSquare, Settings, BarChart3 } from 'lucide-react'
 
 const navigation = [
   {

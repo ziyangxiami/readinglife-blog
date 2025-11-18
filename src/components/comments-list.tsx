@@ -26,8 +26,7 @@ interface CommentsListProps {
  * 展示评论列表和回复功能
  */
 export function CommentsList({ postId, initialComments }: CommentsListProps) {
-  const [comments, setComments] = useState<Comment[]>(initialComments)
-  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [comments] = useState<Comment[]>([])
 
   const handleCommentCreated = () => {
     // 重新加载评论

@@ -115,7 +115,7 @@ export function SearchResults() {
         <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-gray-900 mb-2">没有找到结果</h3>
         <p className="text-gray-600 mb-6">
-          没有找到与 "{query}" 相关的文章
+          没有找到与 &quot;{query}&quot; 相关的文章
         </p>
         <p className="text-sm text-gray-500 mb-4">
           建议：
@@ -136,7 +136,7 @@ export function SearchResults() {
           搜索结果 ({posts.length})
         </h2>
         <p className="text-gray-600">
-          找到与 "{query}" 相关的文章
+          找到与 &quot;{query}&quot; 相关的文章
         </p>
       </div>
 

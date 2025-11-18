@@ -51,7 +51,7 @@ export async function getPosts(
 
   // 获取标签信息
   const postIds = posts.map(p => p.id)
-  let tags: Tag[] = []
+  const tags: Tag[] = []
   if (postIds.length > 0) {
     const { data: postTagsData } = await supabase
       .from('post_tags')

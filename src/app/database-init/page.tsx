@@ -83,18 +83,21 @@ export default function DatabaseInitPage() {
                       <div className="mt-4">
                         <h3 className="font-medium text-gray-700 mb-2">表状态:</h3>
                         <div className="grid grid-cols-2 gap-2">
-                          {Object.entries(testResult.results).map(([table, result]: [string, any]) => (
-                            <div key={table} className={`p-2 rounded text-sm ${
-                              result.success 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {table}: {result.success ? '✅ 正常' : '❌ 错误'}
-                              {result.success && result.count !== undefined && (
-                                <span className="ml-1">({result.count}条记录)</span>
-                              )}
-                            </div>
-                          ))}
+                          {Object.entries(testResult.results).map(([table, result]) => {
+                            const typedResult = result as { success: boolean; count?: number }
+                            return (
+                              <div key={table} className={`p-2 rounded text-sm ${
+                                typedResult.success 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-red-100 text-red-800'
+                              }`}>
+                                {table}: {typedResult.success ? '✅ 正常' : '❌ 错误'}
+                                {typedResult.success && typedResult.count !== undefined && (
+                                  <span className="ml-1">({typedResult.count}条记录)</span>
+                                )}
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
@@ -103,7 +106,7 @@ export default function DatabaseInitPage() {
                       <div className="mt-4">
                         <h3 className="font-medium text-gray-700 mb-2">分类数据:</h3>
                         <div className="flex flex-wrap gap-2">
-                          {testResult.categories.map((category: any) => (
+                          {testResult.categories.map((category: { id: string; name: string }) => (
                             <span key={category.id} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
                               {category.name}
                             </span>
@@ -116,7 +119,7 @@ export default function DatabaseInitPage() {
                       <div className="mt-4">
                         <h3 className="font-medium text-gray-700 mb-2">标签数据:</h3>
                         <div className="flex flex-wrap gap-2">
-                          {testResult.tags.map((tag: any) => (
+                          {testResult.tags.map((tag: { id: string; name: string }) => (
                             <span key={tag.id} className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm">
                               {tag.name}
                             </span>

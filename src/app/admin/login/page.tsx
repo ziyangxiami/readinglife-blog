@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
         
         // 延迟跳转，确保用户看到成功消息
         setTimeout(() => {
-          router.push('/admin')
+          router.replace('/admin')  // 使用replace而不是push，避免登录页面留在历史记录中
           router.refresh() // 刷新页面状态
         }, 1000)
       }
