@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 文章页面
     const postRoutes = posts.map(post => ({
       url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: post.updated_at,
+      lastModified: (post as any).updated_at || (post as any)._updatedAt || new Date().toISOString(),
       changeFrequency: 'weekly' as const,
       priority: 0.9
     }))

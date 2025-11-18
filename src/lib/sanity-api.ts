@@ -17,12 +17,44 @@ import {
 import { urlFor } from './sanity'
 import { mockPosts, mockCategories, mockTags, mockAuthors, mockSiteSettings } from './mock-data'
 
+// 类型定义
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: any
+  cover_image: string | null
+  tags: Array<{
+    id: string
+    name: string
+    slug: string
+  }>
+  category: {
+    id: string
+    name: string
+    slug: string
+  } | null
+  author: {
+    id: string
+    name: string
+    slug: string
+    avatar?: string
+  } | null
+  published_at: string
+  reading_time: number
+  featured: boolean
+  views: number
+  meta_title?: string
+  meta_description?: string
+}
+
 // 检查是否配置了真实的Sanity项目
 const hasRealSanityProject = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && 
   process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== 'demo-project-id'
 
 // 格式化文章数据
-function formatPost(post: any) {
+function formatPost(post: any): BlogPost {
   return {
     id: post._id,
     title: post.title,
@@ -38,24 +70,20 @@ function formatPost(post: any) {
     category: post.category ? {
       id: post.category._id,
       name: post.category.title,
-      slug: post.category.slug.current,
-      color: post.category.color || '#3B82F6'
+      slug: post.category.slug.current
     } : null,
     author: post.author ? {
       id: post.author._id,
       name: post.author.name,
       slug: post.author.slug.current,
-      avatar: post.author.avatar ? urlFor(post.author.avatar).url() : null,
-      bio: post.author.bio
+      avatar: post.author.avatar ? urlFor(post.author.avatar).url() : undefined
     } : null,
     published_at: post.publishedAt,
-    created_at: post._createdAt,
-    updated_at: post._updatedAt,
     featured: post.featured || false,
     reading_time: post.readingTime || 5,
-    view_count: Math.floor(Math.random() * 1000) + 100, // 模拟阅读数
-    meta_title: post.metaTitle || post.title,
-    meta_description: post.metaDescription || post.excerpt
+    views: Math.floor(Math.random() * 1000) + 100, // 模拟阅读数
+    meta_title: (post as any).metaTitle || post.title,
+    meta_description: (post as any).metaDescription || post.excerpt
   }
 }
 

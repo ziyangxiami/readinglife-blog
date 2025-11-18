@@ -36,7 +36,7 @@ export function useAdminAuth() {
     if (!isLoading) {
       setIsChecking(false)
     }
-  }, [isLoading, isAuthenticated, router, session, status])
+  }, [isLoading, isAuthenticated, router])
   
   return {
     session,
