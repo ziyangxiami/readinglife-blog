@@ -7,8 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity'
 import { Navigation } from '@/components/navigation'
-import { CommentsList } from '@/components/comments-list'
-import { CommentForm } from '@/components/comment-form'
+import { CommentsSection } from '@/components/comments-section'
 import { PortableTextContent } from '@/components/portable-text-content'
 
 /**
@@ -34,9 +33,7 @@ export default async function BlogPostPage({
     notFound()
   }
 
-  // 注意：阅读量统计功能已简化，后续需要实现 Sanity 版本
-  // 评论功能暂时使用内存存储，需要后续实现完整的 Sanity 评论系统
-  const comments: any[] = [] // 临时空评论列表
+  // 评论功能已移至客户端组件处理
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -148,21 +145,7 @@ export default async function BlogPostPage({
       </article>
 
       {/* 评论区 */}
-      <section className="max-w-4xl mx-auto px-4 pb-16">
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            评论 ({comments.length})
-          </h2>
-          
-          {/* 评论表单 */}
-          <div className="mb-8">
-            <CommentForm postId={post._id} onCommentCreated={() => window.location.reload()} />
-          </div>
-
-          {/* 评论列表 */}
-          <CommentsList postId={post._id} initialComments={comments} />
-        </div>
-      </section>
+      <CommentsSection postId={post._id} />
     </div>
   )
 }
