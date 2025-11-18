@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withAdminAuth } from '@/lib/admin-auth'
 import { supabaseAdmin } from '@/lib/supabase'
 
 /**
  * 管理员文件上传 API
  * POST /api/admin/upload
  * 支持图片上传到 Supabase Storage
+ * 注意：现在使用Sanity Studio进行身份验证，不再使用Next Auth
  */
-export const POST = withAdminAuth(async (request: NextRequest, admin: any) => {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -94,4 +94,4 @@ export const POST = withAdminAuth(async (request: NextRequest, admin: any) => {
       { status: 500 }
     )
   }
-})
+}

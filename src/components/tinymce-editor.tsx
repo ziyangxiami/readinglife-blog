@@ -4,7 +4,6 @@ import { useRef, useEffect } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import { Button } from '@/components/ui/button'
 import { Save } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 
 interface TinymceEditorProps {
@@ -20,6 +19,7 @@ interface TinymceEditorProps {
 /**
  * TinyMCE 富文本编辑器组件
  * 支持图片上传、代码高亮、自动保存等功能
+ * 现在使用Sanity Studio进行身份验证，不再依赖Next Auth
  */
 export default function TinymceEditor({
   value,
@@ -32,7 +32,6 @@ export default function TinymceEditor({
 }: TinymceEditorProps) {
   const editorRef = useRef<any>(null)
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const { data: session } = useSession()
 
   // 自动保存逻辑
   useEffect(() => {
@@ -63,16 +62,8 @@ export default function TinymceEditor({
       const xhr = new XMLHttpRequest()
       xhr.open('POST', '/api/admin/upload', true)
       
-      // 使用NextAuth.js会话token
-      if (session?.user?.role === 'admin') {
-        // NextAuth.js使用cookie认证，这里不需要手动添加header
-        // 浏览器会自动携带cookie
-        console.log("[Editor] 使用管理员会话上传图片")
-      } else {
-        console.error("[Editor] 未找到管理员会话")
-        reject(new Error('未登录管理员账户'))
-        return
-      }
+      // Sanity Studio处理身份验证，浏览器会自动携带相关cookie
+      console.log("[Editor] 上传图片到Sanity Studio")
       
       xhr.upload.onprogress = (e) => {
         progress((e.loaded / e.total) * 100)
@@ -82,29 +73,22 @@ export default function TinymceEditor({
         if (xhr.status === 200) {
           try {
             const response = JSON.parse(xhr.responseText)
-            if (response.success && response.data?.url) {
-              console.log("[Editor] 图片上传成功")
-              resolve(response.data.url)
+            if (response.url) {
+              resolve(response.url)
             } else {
-              console.error("[Editor] 图片上传失败:", response)
-              reject(new Error(response.message || '上传失败'))
+              reject(new Error('上传失败: ' + (response.error || '未知错误')))
             }
-          } catch (e) {
-            console.error("[Editor] 解析响应失败:", e)
+          } catch (error) {
             reject(new Error('解析响应失败'))
           }
         } else if (xhr.status === 401) {
-          console.error("[Editor] 未授权上传")
-          toast.error('未授权：请先登录管理员账户')
-          reject(new Error('未授权：请先登录管理员账户'))
+          reject(new Error('未授权：请先登录Sanity Studio'))
         } else {
-          console.error("[Editor] 上传失败，状态码:", xhr.status)
-          reject(new Error(`上传失败 (状态码: ${xhr.status})`))
+          reject(new Error('上传失败: HTTP ' + xhr.status))
         }
       }
 
       xhr.onerror = () => {
-        console.error("[Editor] 网络错误")
         reject(new Error('网络错误'))
       }
 
@@ -114,34 +98,10 @@ export default function TinymceEditor({
     })
   }
 
-  const handleManualSave = () => {
-    if (editorRef.current && onAutoSave) {
-      const content = editorRef.current.getContent()
-      console.log("[Editor] 手动保存内容")
-      onAutoSave(content)
-      toast.success('内容已保存')
-    }
-  }
-
   return (
     <div className="relative">
-      {/* 手动保存按钮 */}
-      {autoSave && (
-        <div className="absolute top-2 right-2 z-10">
-          <Button
-            onClick={handleManualSave}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <Save className="w-4 h-4" />
-            保存草稿
-          </Button>
-        </div>
-      )}
-
       <Editor
-        apiKey="your-tinymce-api-key" // 需要申请免费 API Key
+        tinymceScriptSrc="/tinymce/tinymce.min.js"
         onInit={(_evt, editor) => {
           editorRef.current = editor
         }}
@@ -150,65 +110,58 @@ export default function TinymceEditor({
         init={{
           height,
           placeholder,
+          menubar: false,
           plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'codesample'
+            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
+            'codesample', 'autoresize'
           ],
           toolbar:
             'undo redo | blocks | ' +
             'bold italic forecolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent | ' +
             'image link codesample | removeformat | help',
+          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
           images_upload_handler: handleImageUpload,
           automatic_uploads: true,
           file_picker_types: 'image',
-          codesample_languages: [
-            { text: 'HTML/XML', value: 'markup' },
-            { text: 'JavaScript', value: 'javascript' },
-            { text: 'CSS', value: 'css' },
-            { text: 'TypeScript', value: 'typescript' },
-            { text: 'JSON', value: 'json' },
-            { text: 'Python', value: 'python' },
-            { text: 'Java', value: 'java' },
-            { text: 'C++', value: 'cpp' },
-            { text: 'SQL', value: 'sql' },
-            { text: 'Bash', value: 'bash' }
-          ],
-          content_style: `
-            body { 
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-              font-size: 16px;
-              line-height: 1.6;
-              color: #374151;
-            }
-            pre[class*="language-"] {
-              background: #1e293b !important;
-              color: #e2e8f0 !important;
-              padding: 1rem !important;
-              border-radius: 0.5rem !important;
-              overflow-x: auto !important;
-            }
-            code[class*="language-"] {
-              color: #e2e8f0 !important;
-            }
-            img {
-              max-width: 100%;
-              height: auto;
-              border-radius: 0.5rem;
-            }
-          `,
+          images_file_types: 'jpeg,jpg,jpe,jfi,jif,jfif,png,gif,bmp,webp',
+          max_filesize: 10 * 1024 * 1024, // 10MB
+          language: 'zh_CN',
+          language_url: '/tinymce/langs/zh_CN.js',
           setup: (editor: any) => {
             editor.on('keydown', (e: any) => {
-              // Ctrl/Cmd + S 手动保存
+              // Ctrl/Cmd + S 保存
               if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault()
-                handleManualSave()
+                if (onAutoSave) {
+                  onAutoSave(editor.getContent())
+                  toast.success('内容已保存')
+                }
               }
             })
           }
         }}
       />
+      {autoSave && (
+        <div className="absolute top-2 right-2 z-10">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              if (editorRef.current && onAutoSave) {
+                const content = editorRef.current.getContent()
+                onAutoSave(content)
+                toast.success('内容已保存')
+              }
+            }}
+          >
+            <Save className="w-3 h-3 mr-1" />
+            保存
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
