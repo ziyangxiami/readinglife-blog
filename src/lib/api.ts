@@ -185,6 +185,52 @@ export async function getTags(): Promise<Tag[]> {
 }
 
 /**
+ * 获取博客统计数据
+ * 包含文章数、分类数、标签数、总阅读量
+ */
+export async function getBlogStats(): Promise<{
+  posts: number
+  categories: number
+  tags: number
+  views: number
+}> {
+  // 文章数量（使用 count）
+  const { count: postCount, error: postCountError } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact' })
+    .range(0, 0)
+  if (postCountError) throw postCountError
+
+  // 分类数量
+  const { count: categoryCount, error: categoryCountError } = await supabase
+    .from('categories')
+    .select('*', { count: 'exact' })
+    .range(0, 0)
+  if (categoryCountError) throw categoryCountError
+
+  // 标签数量
+  const { count: tagCount, error: tagCountError } = await supabase
+    .from('tags')
+    .select('*', { count: 'exact' })
+    .range(0, 0)
+  if (tagCountError) throw tagCountError
+
+  // 总阅读量（拉取 view_count 并在本地求和）
+  const { data: viewsData, error: viewsError } = await supabase
+    .from('posts')
+    .select('view_count')
+  if (viewsError) throw viewsError
+  const viewsSum = (viewsData || []).reduce((sum, row: any) => sum + (row.view_count || 0), 0)
+
+  return {
+    posts: postCount || 0,
+    categories: categoryCount || 0,
+    tags: tagCount || 0,
+    views: viewsSum
+  }
+}
+
+/**
  * 获取文章评论
  * @param postId 文章ID
  */
@@ -251,16 +297,52 @@ export async function createPost(post: {
   title: string
   slug: string
   content: string
+  excerpt?: string
   cover_image?: string
   category_id?: string
   tags?: string[]
+  is_published?: boolean
+  reading_time?: number
 }): Promise<Post> {
-  const { data, error } = await supabase
+  // 准备文章数据
+  const postData = {
+    title: post.title,
+    slug: post.slug,
+    content: post.content,
+    excerpt: post.excerpt || null,
+    cover_image: post.cover_image || null,
+    category_id: post.category_id || null,
+    is_published: post.is_published ?? true,
+    reading_time: post.reading_time || 5,
+    view_count: 0,
+    likes: 0
+  }
+
+  // 插入文章
+  const { data: newPost, error: postError } = await supabase
     .from('posts')
-    .insert(post)
+    .insert(postData)
     .select()
     .single()
 
-  if (error) throw error
-  return data
+  if (postError) throw postError
+
+  // 如果有标签，处理标签关联
+  if (post.tags && post.tags.length > 0) {
+    const tagAssociations = post.tags.map(tagId => ({
+      post_id: newPost.id,
+      tag_id: tagId
+    }))
+
+    const { error: tagsError } = await supabase
+      .from('post_tags')
+      .insert(tagAssociations)
+
+    if (tagsError) {
+      console.error('标签关联失败:', tagsError)
+      // 不抛出错误，文章仍然创建成功，只是标签关联失败
+    }
+  }
+
+  return newPost
 }

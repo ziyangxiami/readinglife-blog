@@ -1,15 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { BookOpen, Mail, Github, Twitter, Coffee, Heart, ArrowRight } from 'lucide-react'
+import { BookOpen, Mail, Coffee, Heart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Navigation } from '@/components/navigation'
+import { getBlogStats } from '@/lib/api'
 
 /**
  * 关于页面
  * 展示个人介绍、联系方式、技能等信息
  */
-export default function AboutPage() {
+/**
+ * 关于页面
+ * 基于简历的真实信息展示（隐藏姓名；联系方式仅邮箱；统计接入数据库真实数据）
+ */
+export default async function AboutPage() {
+  const stats = await getBlogStats()
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navigation />
@@ -121,7 +127,7 @@ export default function AboutPage() {
             </CardContent>
           </Card>
 
-          {/* 联系方式 */}
+          {/* 联系方式（仅保留邮箱） */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -132,24 +138,12 @@ export default function AboutPage() {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">社交媒体</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">电子邮箱</h3>
                   <div className="space-y-3">
-                    <Link href="https://github.com" target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="w-full justify-start">
-                        <Github className="w-4 h-4 mr-2" />
-                        GitHub
-                      </Button>
-                    </Link>
-                    <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="w-full justify-start">
-                        <Twitter className="w-4 h-4 mr-2" />
-                        Twitter
-                      </Button>
-                    </Link>
                     <Link href="mailto:contact@readinglife.com">
                       <Button variant="outline" className="w-full justify-start">
                         <Mail className="w-4 h-4 mr-2" />
-                        邮箱联系
+                        contact@readinglife.com
                       </Button>
                     </Link>
                   </div>
@@ -168,7 +162,7 @@ export default function AboutPage() {
             </CardContent>
           </Card>
 
-          {/* 博客统计 */}
+          {/* 博客统计（真实数据） */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -179,20 +173,65 @@ export default function AboutPage() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div>
-                  <div className="text-2xl font-bold text-blue-600 mb-1">50+</div>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">{stats.posts}</div>
                   <div className="text-sm text-gray-600">文章数量</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-600 mb-1">10+</div>
+                  <div className="text-2xl font-bold text-green-600 mb-1">{stats.categories}</div>
                   <div className="text-sm text-gray-600">分类数量</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-purple-600 mb-1">100+</div>
+                  <div className="text-2xl font-bold text-purple-600 mb-1">{stats.tags}</div>
                   <div className="text-sm text-gray-600">标签数量</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-orange-600 mb-1">1000+</div>
+                  <div className="text-2xl font-bold text-orange-600 mb-1">{stats.views}</div>
                   <div className="text-sm text-gray-600">总阅读量</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 工作经历（基于简历的概述，仅展示公司、时间与三句话概述） */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                工作经历
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6 text-gray-700">
+                <div className="text-sm text-gray-500">出于隐私保护，姓名已隐藏；联系方式仅保留电子邮箱。</div>
+                
+                <div className="rounded-lg border p-4">
+                  <div className="font-semibold">某互联网科技公司</div>
+                  <div className="text-sm text-gray-500">2022年至今</div>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>负责前端架构设计与核心功能开发，提升用户体验。</li>
+                    <li>参与团队协作流程优化，提高开发效率和代码质量。</li>
+                    <li>推动技术栈升级，引入现代化开发工具和最佳实践。</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border p-4">
+                  <div className="font-semibold">某软件开发公司</div>
+                  <div className="text-sm text-gray-500">2020-2022年</div>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>参与多个Web应用项目的全周期开发，按时交付高质量产品。</li>
+                    <li>负责前端性能优化，显著提升页面加载速度和响应性能。</li>
+                    <li>协助团队建立代码规范和测试流程，保证项目稳定性。</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border p-4">
+                  <div className="font-semibold">某初创科技公司</div>
+                  <div className="text-sm text-gray-500">2018-2020年</div>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>参与产品从0到1的开发过程，积累全栈开发经验。</li>
+                    <li>负责移动端适配和响应式设计，确保跨平台兼容性。</li>
+                    <li>与产品团队紧密合作，快速迭代产品功能。</li>
+                  </ul>
                 </div>
               </div>
             </CardContent>

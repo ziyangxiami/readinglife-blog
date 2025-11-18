@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Menu, X, BookOpen, Home, User, Search } from 'lucide-react'
+import { Menu, X, BookOpen, Home, User, Search, Settings } from 'lucide-react'
 import { SearchBox } from './search-box'
 
 const navigation = [
@@ -22,6 +22,11 @@ const navigation = [
     name: '关于',
     href: '/about',
     icon: User
+  },
+  {
+    name: '管理',
+    href: '/admin',
+    icon: Settings
   },
   {
     name: '搜索',

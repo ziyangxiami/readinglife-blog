@@ -16,25 +16,57 @@ import remarkGfm from 'remark-gfm'
  * 文章详情页面
  * 展示单篇文章的完整内容
  */
+/**
+ * 文章详情页面
+ * 展示单篇文章的完整内容
+ * 特殊处理：当 slug 为 'welcome-to-reading-life' 且数据库无记录时，提供兜底渲染以避免 404
+ */
 export default async function BlogPostPage({
   params
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const post = await getPostBySlug(params.slug)
+  const { slug } = await params
+  let post = await getPostBySlug(slug)
+  let isFallback = false
 
   if (!post) {
-    notFound()
+    if (slug === 'welcome-to-reading-life') {
+      const fallbackCreatedAt = new Date().toISOString()
+      const fallbackContent = `# 欢迎来到 Reading Life\n\n这是我的个人博客，专注于技术、文学、哲学和生活感悟的分享。\n\n## 关于这个博客\n\n这个博客使用现代化的技术栈构建：\n- 前端: Next.js 14 + React 18 + TypeScript\n- 样式: Tailwind CSS\n- 数据库: Supabase (PostgreSQL)\n- 部署: Vercel\n\n## 功能特性\n\n- 文章管理系统\n- 分类和标签系统\n- 评论功能\n- 搜索功能\n- 响应式设计\n- 深色模式支持\n\n## 开始探索\n\n点击顶部导航栏开始浏览文章，或者使用搜索功能找到你感兴趣的内容。\n\n感谢你的访问！`
+      post = {
+        id: 'fallback-welcome',
+        title: '欢迎来到 Reading Life',
+        slug: 'welcome-to-reading-life',
+        content: fallbackContent,
+        excerpt: '欢迎来到我的个人博客，这里分享技术、文学、哲学与生活感悟。',
+        cover_image: null,
+        category_id: null,
+        category: null,
+        tags: [],
+        reading_time: 3,
+        view_count: 0,
+        likes: 0,
+        is_published: true,
+        created_at: fallbackCreatedAt,
+        updated_at: fallbackCreatedAt
+      } as any
+      isFallback = true
+    } else {
+      notFound()
+    }
   }
 
-  // 增加阅读量（在服务端执行）
-  try {
-    await incrementViewCount(post.id)
-  } catch (error) {
-    console.error('增加阅读量失败:', error)
+  // 增加阅读量（在服务端执行；兜底文章不计入）
+  if (!isFallback) {
+    try {
+      await incrementViewCount(post.id)
+    } catch (error) {
+      console.error('增加阅读量失败:', error)
+    }
   }
 
-  const comments = await getComments(post.id)
+  const comments = isFallback ? [] : await getComments(post.id)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -247,10 +279,35 @@ export default async function BlogPostPage({
 /**
  * 生成页面元数据
  */
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug)
+/**
+ * 生成页面元数据
+ * 当为欢迎兜底文章时，返回静态的合理 SEO 元数据
+ */
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = await getPostBySlug(slug)
 
   if (!post) {
+    if (slug === 'welcome-to-reading-life') {
+      return {
+        title: '欢迎来到 Reading Life - Reading Life',
+        description: '欢迎来到我的个人博客，这里分享技术、文学、哲学与生活感悟。',
+        openGraph: {
+          title: '欢迎来到 Reading Life',
+          description: '欢迎来到我的个人博客，这里分享技术、文学、哲学与生活感悟。',
+          images: ['/og-image.jpg'],
+          type: 'article',
+          publishedTime: new Date().toISOString(),
+          modifiedTime: new Date().toISOString()
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: '欢迎来到 Reading Life',
+          description: '欢迎来到我的个人博客，这里分享技术、文学、哲学与生活感悟。',
+          images: ['/twitter-image.jpg']
+        }
+      }
+    }
     return {
       title: '文章未找到',
       description: '文章不存在或已被删除'

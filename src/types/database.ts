@@ -10,6 +10,7 @@ export interface Post {
   reading_time: number
   view_count: number
   likes: number
+  is_published: boolean
   created_at: string
   updated_at: string
   category?: Category
