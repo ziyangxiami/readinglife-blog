@@ -181,8 +181,8 @@ export default function TinymceEditor({
               border-radius: 0.5rem;
             }
           `,
-          setup: (editor) => {
-            editor.on('keydown', (e) => {
+          setup: (editor: any) => {
+            editor.on('keydown', (e: any) => {
               // Ctrl/Cmd + S 手动保存
               if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault()

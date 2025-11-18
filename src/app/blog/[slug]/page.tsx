@@ -57,8 +57,13 @@ export default async function BlogPostPage({
     }
   }
 
+  // 此时 post 一定存在（要么是数据库中的，要么是兜底的）
+  if (!post) {
+    notFound()
+  }
+
   // 增加阅读量（在服务端执行；兜底文章不计入）
-  if (!isFallback) {
+  if (!isFallback && post) {
     try {
       await incrementViewCount(post.id)
     } catch (error) {
