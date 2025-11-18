@@ -23,7 +23,7 @@ export const mockPosts = [
       id: '1',
       name: '博主',
       slug: 'blogger',
-      avatar: '/avatar.svg',
+      avatar: '/logo-avatar.svg',
       bio: '终身学习者，读书爱好者'
     },
     published_at: '2024-01-01T00:00:00Z',
@@ -57,7 +57,7 @@ export const mockPosts = [
       id: '1',
       name: '博主',
       slug: 'blogger',
-      avatar: '/avatar.svg',
+      avatar: '/logo-avatar.svg',
       bio: '终身学习者，读书爱好者'
     },
     published_at: '2024-01-15T00:00:00Z',
@@ -120,7 +120,7 @@ export const mockAuthors = [
     name: '博主',
     slug: 'blogger',
     bio: '终身学习者，读书爱好者，专注于技术分享和知识传播。',
-    avatar: '/avatar.svg',
+    avatar: '/logo-avatar.svg',
     social_links: {
       twitter: 'https://twitter.com/example',
       github: 'https://github.com/example',

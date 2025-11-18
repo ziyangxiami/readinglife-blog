@@ -5,6 +5,47 @@ import { NextRequest, NextResponse } from 'next/server'
 const comments = new Map<string, any[]>()
 
 /**
+ * 获取评论列表API
+ * 根据post_id获取评论列表
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const post_id = searchParams.get('post_id')
+
+    if (!post_id) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: '缺少post_id参数',
+          message: '请提供文章ID'
+        },
+        { status: 400 }
+      )
+    }
+
+    // 获取评论列表（只返回已批准的评论）
+    const postComments = comments.get(post_id) || []
+    const approvedComments = postComments.filter(comment => comment.status === 'approved')
+
+    return NextResponse.json({
+      success: true,
+      data: approvedComments
+    })
+  } catch (error) {
+    console.error('获取评论失败:', error)
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: '获取评论失败',
+        message: error instanceof Error ? error.message : '未知错误'
+      },
+      { status: 500 }
+    )
+  }
+}
+
+/**
  * 创建评论API
  * 注意：当前使用内存存储，需要迁移到Sanity
  */
@@ -59,7 +100,7 @@ export async function POST(request: NextRequest) {
       content: content.trim(),
       parent_id: parent_id || null,
       created_at: new Date().toISOString(),
-      status: 'pending' // 默认待审核状态
+      status: 'approved' // 为了演示，直接设置为已批准状态
     }
 
     // 存储评论（内存中）

@@ -27,11 +27,11 @@ export default async function HomePage() {
           <div className="mb-8">
             <div className="w-20 h-20 mx-auto mb-6">
               <Image
-                src="/logo-avatar.jpg"
+                src="/logo-avatar.svg"
                 alt="Reading Life"
                 width={80}
                 height={80}
-                className="rounded-full object-cover"
+                className="rounded-full"
                 priority
               />
             </div>

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { User, MessageCircle, Reply } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CommentForm } from './comment-form'
+import { toast } from 'sonner'
 
 interface Comment {
   id: string
@@ -26,11 +27,36 @@ interface CommentsListProps {
  * 展示评论列表和回复功能
  */
 export function CommentsList({ postId, initialComments }: CommentsListProps) {
-  const [comments] = useState<Comment[]>([])
+  const [comments, setComments] = useState<Comment[]>(initialComments)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // 获取评论列表
+  const fetchComments = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`/api/comments?post_id=${postId}`)
+      const result = await response.json()
+      
+      if (response.ok && result.success) {
+        setComments(result.data)
+      } else {
+        toast.error('获取评论失败')
+      }
+    } catch (error) {
+      console.error('获取评论失败:', error)
+      toast.error('获取评论失败')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchComments()
+  }, [postId])
 
   const handleCommentCreated = () => {
-    // 重新加载评论
-    window.location.reload()
+    // 重新获取评论列表
+    fetchComments()
   }
 
   const formatDate = (dateString: string) => {
@@ -107,18 +133,6 @@ export function CommentsList({ postId, initialComments }: CommentsListProps) {
 
   return (
     <div className="space-y-6">
-      {/* 评论表单 */}
-      <div className="p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
-          <MessageCircle className="w-4 h-4" />
-          发表评论
-        </h4>
-        <CommentForm
-          postId={postId}
-          onCommentCreated={handleCommentCreated}
-        />
-      </div>
-
       {/* 评论列表 */}
       <div className="space-y-6">
         {comments.length > 0 ? (
