@@ -1,4 +1,4 @@
-import { getPosts, getCategories } from '@/lib/api'
+import { getPostsByCategorySlug, getCategories } from '@/lib/sanity-api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Folder, ArrowRight } from 'lucide-react'
@@ -7,12 +7,8 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 interface CategoryPageProps {
-  params: {
-    category: string
-  }
-  searchParams: {
-    page?: string
-  }
+  params: Promise<{ category: string }>
+  searchParams: Promise<{ page?: string }>
 }
 
 /**
@@ -20,11 +16,13 @@ interface CategoryPageProps {
  * 展示特定分类下的所有文章
  */
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const page = Number(searchParams.page) || 1
-  const { category } = params
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
+  const page = Number(resolvedSearchParams.page) || 1
+  const { category } = resolvedParams
 
   const [{ posts, total, totalPages }, categories] = await Promise.all([
-    getPosts(page, 10, category),
+    getPostsByCategorySlug(category, page, 10),
     getCategories()
   ])
 
@@ -152,7 +150,7 @@ function ArticleCard({ post }: { post: any }) {
             <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
               <span className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                {new Date(post.created_at).toLocaleDateString('zh-CN')}
+                {new Date(post.published_at).toLocaleDateString('zh-CN')}
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
@@ -163,7 +161,7 @@ function ArticleCard({ post }: { post: any }) {
               {post.title}
             </h2>
             <p className="text-gray-600 line-clamp-3 mb-4">
-              {post.content.slice(0, 200)}...
+              {post.content ? (typeof post.content === 'string' ? post.content.slice(0, 200) : '') : post.excerpt}...
             </p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -177,7 +175,7 @@ function ArticleCard({ post }: { post: any }) {
                 ))}
               </div>
               <span className="text-sm text-gray-500">
-                {post.view_count} 次阅读
+                {post.views} 次阅读
               </span>
             </div>
           </div>
