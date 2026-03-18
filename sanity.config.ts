@@ -1,9 +1,9 @@
-// sanity.config.ts
 import { defineConfig } from 'sanity'
 import { deskTool } from 'sanity/desk'
 import { visionTool } from '@sanity/vision'
 import { codeInput } from '@sanity/code-input'
 import { colorInput } from '@sanity/color-input'
+import { markdownSchema } from 'sanity-plugin-markdown'
 import { schemaTypes } from './schemas'
 
 // Use a fallback project ID just for UI rendering if none is provided.
@@ -25,6 +25,7 @@ export default defineConfig({
     visionTool(),
     codeInput(),
     colorInput(),
+    markdownSchema(),
   ],
 
   schema: {

@@ -168,31 +168,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
-  // 从Portable Text中提取文本摘要
-  const extractTextFromPortableText = (content: unknown[]): string => {
-    if (!content || !Array.isArray(content)) return ''
-    
-    let text = ''
-    const extractText = (blocks: unknown[]) => {
-      for (const block of blocks) {
-        if (typeof block === 'object' && block !== null) {
-          const blockAny = block as any
-          if (blockAny._type === 'block' && blockAny.children) {
-            for (const child of blockAny.children) {
-              if (child.text) {
-                text += child.text + ' '
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    extractText(content)
-    return text.trim().slice(0, 160)
+  // 提取纯文本摘要（原为从 Portable Text 提取，现从 Markdown 提取）
+  const extractTextFromMarkdown = (content: any): string => {
+    if (!content) return ''
+    const mdString = typeof content === 'string' ? content : (content.body || content.markdown || '')
+    // 简单剥离 Markdown 符号来生成纯文本摘要
+    const plainText = mdString.replace(/[#*`_\[\]()]/g, '').trim()
+    return plainText.slice(0, 160)
   }
 
-  const description = post.excerpt || extractTextFromPortableText(post.content as unknown[]) || '文章详情'
+  const description = post.excerpt || extractTextFromMarkdown(post.content) || '文章详情'
   const coverImageUrl = post.coverImage ? urlFor(post.coverImage).url() : '/og-image.jpg'
 
   return {
