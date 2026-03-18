@@ -12,6 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Map, MapPin } from 'lucide-react'
 import Image from 'next/image'
 
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+
 // Register ECharts core components
 echarts.use([
   MapChart, 
@@ -45,6 +48,11 @@ export default function TravelMap({ trips }: TravelMapProps) {
   const [mapType, setMapType] = useState<MapType>('world')
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [mapsLoaded, setMapsLoaded] = useState({ world: false, china: false })
+  
+  // Lightbox State
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [lightboxSlides, setLightboxSlides] = useState<{ src: string }[]>([])
 
   // Extract visited places for highlighting
   const visitedCountries = useMemo(() => {
@@ -121,7 +129,7 @@ export default function TravelMap({ trips }: TravelMapProps) {
         {
           type: 'map',
           map: isWorld ? 'world' : 'china',
-          roam: true, // Allow zoom and pan
+          roam: false, // Disable zoom and pan interaction
           itemStyle: {
             borderColor: '#ffffff',
             borderWidth: 1,
@@ -236,7 +244,19 @@ export default function TravelMap({ trips }: TravelMapProps) {
                         {/* Trip Gallery */}
                         <div className="md:w-2/3 p-6 bg-gray-50 border-l border-gray-100 flex gap-4 overflow-x-auto snap-x pt-6 pb-6">
                             {trip.coverImage && (
-                              <div className="shrink-0 snap-center relative w-64 h-64 rounded-lg overflow-hidden shadow-sm">
+                              <div 
+                                className="shrink-0 snap-center relative w-64 h-64 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => {
+                                  const slides = [];
+                                  if (trip.coverImage) slides.push({ src: trip.coverImage });
+                                  if (trip.gallery) {
+                                    trip.gallery.forEach(img => slides.push({ src: img }));
+                                  }
+                                  setLightboxSlides(slides);
+                                  setLightboxIndex(0);
+                                  setLightboxOpen(true);
+                                }}
+                              >
                                 <Image
                                   src={trip.coverImage}
                                   alt="Cover"
@@ -246,7 +266,20 @@ export default function TravelMap({ trips }: TravelMapProps) {
                               </div>
                             )}
                             {trip.gallery && trip.gallery.map((img, idx) => (
-                              <div key={idx} className="shrink-0 snap-center relative w-64 h-64 rounded-lg overflow-hidden shadow-sm">
+                              <div 
+                                key={idx} 
+                                className="shrink-0 snap-center relative w-64 h-64 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => {
+                                  const slides = [];
+                                  if (trip.coverImage) slides.push({ src: trip.coverImage });
+                                  if (trip.gallery) {
+                                    trip.gallery.forEach(img => slides.push({ src: img }));
+                                  }
+                                  setLightboxSlides(slides);
+                                  setLightboxIndex(trip.coverImage ? idx + 1 : idx);
+                                  setLightboxOpen(true);
+                                }}
+                              >
                                 <Image
                                   src={img}
                                   alt={`Gallery image ${idx + 1}`}
@@ -278,6 +311,15 @@ export default function TravelMap({ trips }: TravelMapProps) {
           )}
         </div>
       </main>
+
+      {/* Lightbox Component */}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={lightboxSlides}
+        // Optional plugins can be added here (thumbnails, zoom, etc.)
+      />
     </div>
   )
 }
