@@ -106,8 +106,8 @@ export async function getNeoDBShelf(type: 'book' | 'movie' | 'music' | 'game' | 
   }
 }
 
-export async function getNeoDBBookByISBN(isbn: string) {
-  const endpoint = `${NEODB_API_BASE}/catalog/search?query=${isbn}`;
+export async function getNeoDBBookByQuery(query: string) {
+  const endpoint = `${NEODB_API_BASE}/catalog/search?query=${encodeURIComponent(query)}`;
   try {
     const data = await fetchWithRetry(endpoint);
     if (data && data.data && data.data.length > 0) {
@@ -115,7 +115,7 @@ export async function getNeoDBBookByISBN(isbn: string) {
     }
     return null;
   } catch (error) {
-    console.error(`获取 NeoDB 图书 ISBN ${isbn} 失败:`, error);
+    console.error(`获取 NeoDB 图书 ${query} 失败:`, error);
     return null;
   }
 }
