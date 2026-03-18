@@ -105,3 +105,17 @@ export async function getNeoDBShelf(type: 'book' | 'movie' | 'music' | 'game' | 
     return { items: [], count: 0 };
   }
 }
+
+export async function getNeoDBBookByISBN(isbn: string) {
+  const endpoint = `${NEODB_API_BASE}/catalog/search?query=${isbn}`;
+  try {
+    const data = await fetchWithRetry(endpoint);
+    if (data && data.data && data.data.length > 0) {
+      return data.data[0];
+    }
+    return null;
+  } catch (error) {
+    console.error(`获取 NeoDB 图书 ISBN ${isbn} 失败:`, error);
+    return null;
+  }
+}

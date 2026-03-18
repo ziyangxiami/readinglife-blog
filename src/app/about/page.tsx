@@ -24,7 +24,7 @@ export default function AboutPage() {
             <div className="flex-shrink-0">
               <div className="w-64 h-64 bg-gray-100 rounded-full overflow-hidden">
                 <Image
-                  src="/logo-avatar-new.svg"
+                  src="/SVG_profile.svg"
                   alt="个人头像"
                   width={256}
                   height={256}
