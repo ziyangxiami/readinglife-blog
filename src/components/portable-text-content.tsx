@@ -11,6 +11,14 @@ interface PortableTextContentProps {
  * 将Sanity的Portable Text格式渲染为React组件
  */
 export function PortableTextContent({ content }: PortableTextContentProps) {
+  if (typeof content === 'string') {
+    return (
+      <div className="prose prose-lg max-w-none">
+        <p className="text-gray-700 leading-relaxed mb-4">{content}</p>
+      </div>
+    )
+  }
+
   return (
     <div className="prose prose-lg max-w-none">
       <PortableText

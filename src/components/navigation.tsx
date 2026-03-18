@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Menu, X, BookOpen, Home, User, Search, Settings } from 'lucide-react'
+import { Menu, X, BookOpen, Home, User, Search, Settings, Film } from 'lucide-react'
 import { SearchBox } from './search-box'
 import Image from 'next/image'
 import { ThemeToggleSimple } from './theme-toggle-simple'
@@ -19,6 +19,11 @@ const navigation = [
     name: '文章',
     href: '/blog',
     icon: BookOpen
+  },
+  {
+    name: '书影音',
+    href: '/library',
+    icon: Film
   },
   {
     name: '关于',

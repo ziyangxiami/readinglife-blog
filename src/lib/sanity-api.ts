@@ -50,8 +50,7 @@ interface BlogPost {
 }
 
 // 检查是否配置了真实的Sanity项目
-const hasRealSanityProject = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && 
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== 'demo-project-id'
+const hasRealSanityProject = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== 'demo-project-id'
 
 // 格式化文章数据
 function formatPost(post: any): BlogPost {

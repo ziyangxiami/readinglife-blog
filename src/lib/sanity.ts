@@ -7,12 +7,25 @@ export const sanityClient = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2023-12-03',
   useCdn: false, // 禁用CDN缓存以确保数据实时同步
+  token: process.env.SANITY_API_TOKEN, // 鉴权Token，用于读写操作
 })
 
 // 图片URL构建器
 const builder = imageUrlBuilder(sanityClient)
 
-export function urlFor(source: { asset?: { _ref: string } } | string) {
+export function urlFor(source: any) {
+  // 如果是对mock数据中的图片直接包含了url属性，则直接返回对应的url
+  if (source?.asset?.url) {
+    return {
+      url: () => source.asset.url
+    }
+  }
+  // 如果是普通字符串形式的http链接
+  if (typeof source === 'string' && source.startsWith('http')) {
+    return {
+      url: () => source
+    }
+  }
   return builder.image(source)
 }
 

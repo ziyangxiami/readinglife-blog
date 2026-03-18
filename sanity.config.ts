@@ -6,13 +6,19 @@ import { codeInput } from '@sanity/code-input'
 import { colorInput } from '@sanity/color-input'
 import { schemaTypes } from './schemas'
 
+// Use a fallback project ID just for UI rendering if none is provided.
+// This prevents the Studio crash on boot when missing env vars.
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'demo-project-id'
+// Use the exact dataset name configured in your Sanity project
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+
 export default defineConfig({
   name: 'default',
   title: 'ReadingLife Blog',
   basePath: '/admin', // 关键配置：告诉Studio它的基础路径是/admin
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'demo-project-id',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId,
+  dataset,
 
   plugins: [
     deskTool(),
