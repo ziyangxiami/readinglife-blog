@@ -1,6 +1,8 @@
 import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/lib/sanity'
 import Image from 'next/image'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface PortableTextContentProps {
   content: any
@@ -13,8 +15,10 @@ interface PortableTextContentProps {
 export function PortableTextContent({ content }: PortableTextContentProps) {
   if (typeof content === 'string') {
     return (
-      <div className="prose prose-lg max-w-none">
-        <p className="text-gray-700 leading-relaxed mb-4">{content}</p>
+      <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-4">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {content}
+        </ReactMarkdown>
       </div>
     )
   }
