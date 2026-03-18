@@ -1,7 +1,7 @@
 // src/lib/sanity-queries.ts
 import { groq } from 'next-sanity'
 import { sanityClient } from './sanity'
-import type { BlogPost, Category, Tag, Author } from './sanity'
+import type { BlogPost, Category, Tag, Author, Trip } from './sanity'
 import { mockPosts, mockCategories, mockTags, mockAuthors, mockSiteSettings } from './mock-data'
 
 // 判断是否有真实的Sanity项目配置
@@ -55,6 +55,46 @@ function convertToSanityFormat(post: any): any {
     featured: post.featured,
     readingTime: post.reading_time
   };
+}
+
+// 获取所有足迹数据
+export async function getAllTrips(): Promise<Trip[]> {
+  if (!hasRealSanityProject) {
+    // For local mock testing, return a few dummy trips
+    return [
+      {
+        _id: 'trip-1',
+        _createdAt: new Date().toISOString(),
+        title: '北京长城之行',
+        locationName: 'Beijing',
+        country: 'China',
+        visitDate: '2023-10',
+      },
+      {
+        _id: 'trip-2',
+        _createdAt: new Date().toISOString(),
+        title: '京都赏樱',
+        locationName: 'Kyoto',
+        country: 'Japan',
+        visitDate: '2024-04',
+      }
+    ] as unknown as Trip[]
+  }
+  
+  const query = groq`
+    *[_type == "trip"] | order(visitDate desc) {
+      _id,
+      _createdAt,
+      title,
+      locationName,
+      country,
+      visitDate,
+      coverImage,
+      gallery,
+      notes
+    }
+  `
+  return sanityClient.fetch(query)
 }
 
 // 获取所有已发布的博客文章

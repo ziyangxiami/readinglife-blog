@@ -110,3 +110,16 @@ export interface Author {
     linkedin?: string
   }
 }
+
+// 足迹类型定义
+export interface Trip {
+  _id: string
+  _createdAt: string
+  title: string
+  locationName: string
+  country: string
+  visitDate?: string
+  coverImage?: any
+  gallery?: any[]
+  notes?: string
+}

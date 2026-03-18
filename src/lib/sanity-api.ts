@@ -12,7 +12,8 @@ import {
   getAuthorBySlug,
   getPostsByAuthor,
   getSiteSettings,
-  searchPosts
+  searchPosts,
+  getAllTrips
 } from './sanity-queries'
 import { urlFor } from './sanity'
 import { mockPosts, mockCategories, mockTags, mockAuthors, mockSiteSettings } from './mock-data'
@@ -457,7 +458,28 @@ export async function getSiteSettingsData() {
       comments: settings.comments || { provider: 'none' }
     }
   } catch (error) {
-    console.error('获取站点设置失败:', error)
     return null
+  }
+}
+
+// 获取所有足迹
+export async function getTripsData() {
+  try {
+    const trips = await getAllTrips()
+    if (!trips || trips.length === 0) return []
+    
+    return trips.map(trip => ({
+      id: trip._id,
+      title: trip.title,
+      locationName: trip.locationName,
+      country: trip.country,
+      visitDate: trip.visitDate,
+      coverImage: trip.coverImage ? urlFor(trip.coverImage).url() : null,
+      gallery: trip.gallery ? trip.gallery.map((img: any) => urlFor(img).url()) : [],
+      notes: trip.notes
+    }))
+  } catch (error) {
+    console.error('获取足迹数据失败:', error)
+    return []
   }
 }

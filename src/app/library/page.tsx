@@ -1,4 +1,4 @@
-import { getNeoDBShelf } from '@/lib/neodb';
+import { getNeoDBShelf, NeoDBResponse, NeoDBItem } from '@/lib/neodb';
 import { Card, CardContent } from '@/components/ui/card';
 import { Metadata } from 'next';
 import { Navigation } from '@/components/navigation';
@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 // 预定义我们想要展示的模块
 const SECTIONS = [
   { type: 'book' as const, title: '近期阅读', category: 'complete' as const },
+  { type: 'book' as const, title: '在读', category: 'progress' as const },
+  { type: 'book' as const, title: '想读', category: 'wishlist' as const },
   { type: 'movie' as const, title: '近期观影', category: 'complete' as const },
+  { type: 'movie' as const, title: '在看', category: 'progress' as const },
+  { type: 'movie' as const, title: '想看', category: 'wishlist' as const },
   { type: 'music' as const, title: '近期听歌', category: 'complete' as const },
 ];
 
@@ -32,6 +36,18 @@ export default async function LibraryPage() {
     SECTIONS.map((section) => getNeoDBShelf(section.type, section.category, 1))
   );
 
+  const stats: Record<string, Record<string, number>> = {
+    book: { complete: 0, progress: 0, wishlist: 0 },
+    movie: { complete: 0, progress: 0, wishlist: 0 }
+  };
+
+  results.forEach((res, index) => {
+    const sec = SECTIONS[index];
+    if (stats[sec.type]) {
+      stats[sec.type][sec.category] = res.count;
+    }
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -46,64 +62,113 @@ export default async function LibraryPage() {
           </p>
         </div>
 
+        {/* 顶部统计面板 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          <Card className="bg-gradient-to-br from-blue-50/40 to-indigo-50/40 border-blue-100/50 shadow-sm">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">📚</span>
+                <h3 className="text-xl font-medium text-gray-900">读书</h3>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.book.complete}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">已读</span>
+                </div>
+                <div className="flex flex-col border-l border-gray-200/60 pl-4 sm:pl-6">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.book.progress}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">在读</span>
+                </div>
+                <div className="flex flex-col border-l border-gray-200/60 pl-4 sm:pl-6">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.book.wishlist}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">想读</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-emerald-50/40 to-teal-50/40 border-emerald-100/50 shadow-sm">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">🎬</span>
+                <h3 className="text-xl font-medium text-gray-900">观影</h3>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.movie.complete}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">已看</span>
+                </div>
+                <div className="flex flex-col border-l border-gray-200/60 pl-4 sm:pl-6">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.movie.progress}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">在看</span>
+                </div>
+                <div className="flex flex-col border-l border-gray-200/60 pl-4 sm:pl-6">
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 font-serif tracking-tight">{stats.movie.wishlist}</span>
+                  <span className="text-sm text-gray-500 mt-2 font-medium">想看</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="space-y-16">
           {SECTIONS.map((section, index) => {
-            const items = results[index];
-            if (!items || items.length === 0) return null;
+            const result = results[index];
+            if (!result || !result.items || result.items.length === 0) return null;
 
             return (
-              <section key={section.type} className="space-y-6">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+              <section key={`${section.type}-${section.category}`} className="space-y-6">
+                <div className="flex items-baseline justify-between border-b border-gray-200 pb-4">
                   <h2 className="text-2xl font-semibold text-gray-900">{section.title}</h2>
                   <a
                     href={`https://neodb.social/users/ziyangxiami/`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors bg-blue-50/50 px-3 py-1 rounded-full border border-blue-100/50"
                   >
-                    查看全部 →
+                    查看全部 {result.count} →
                   </a>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {items.slice(0, 10).map((item) => ( // 每类最多展示前10个
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
+                  {result.items.slice(0, 10).map((item: NeoDBItem) => ( // 每类最多展示前10个
                     <a
                       key={item.id}
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex flex-col h-full"
+                      className="group flex h-full"
                     >
-                      <Card className="h-full overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
-                        <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-100">
+                      <Card className="h-full w-full overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-row border-gray-100 hover:border-gray-200">
+                        <div className="relative w-28 sm:w-36 flex-shrink-0 overflow-hidden bg-gray-50 border-r border-gray-100">
                           {item.coverUrl ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                               src={item.coverUrl}
                               alt={item.title}
-                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               loading="lazy"
                             />
                           ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                            <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                               暂无封面
                             </div>
                           )}
                         </div>
-                        <CardContent className="p-4 flex-1 flex flex-col">
-                          <h3 className="font-medium text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors" title={item.title}>
+                        <CardContent className="p-4 sm:p-5 flex-1 flex flex-col min-w-0 bg-white">
+                          <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors truncate" title={item.title}>
                             {item.title}
                           </h3>
-                          <div className="mt-1 mb-2">
+                          <div className="mt-1.5 mb-2.5 shrink-0">
                             <RatingStars rating={item.rating} />
                           </div>
                           {item.comment && (
-                            <p className="text-xs text-gray-500 line-clamp-2 mt-auto italic">
+                            <p className="text-sm text-gray-600 whitespace-pre-wrap flex-grow italic leading-relaxed text-justify break-words">
                               "{item.comment}"
                             </p>
                           )}
-                          <div className="mt-2 text-[10px] text-gray-400">
-                            {new Date(item.markDate).toLocaleDateString('zh-CN')}
+                          <div className="mt-4 text-[11px] text-gray-400 shrink-0 font-medium tracking-wide uppercase">
+                            {new Date(item.markDate).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
                           </div>
                         </CardContent>
                       </Card>

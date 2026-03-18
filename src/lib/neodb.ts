@@ -60,41 +60,34 @@ export async function fetchWithRetry(url: string, options: RequestInit = {}, ret
   }
 }
 
-let cachedCompleteData: any = null;
-let lastFetchTime = 0;
+const requestCache = new Map<string, { data: any, time: number }>();
 
-export async function getNeoDBShelf(type: 'book' | 'movie' | 'music' | 'game' | 'podcast', category: 'complete' | 'progress' | 'wishlist' = 'complete', page = 1): Promise<NeoDBItem[]> {
-  // NeoDB 官方 API 文档中，获取特定类型记录的正确 URL 格式是：
-  // GET /api/me/shelf/{category} 获取全部，由于这个接口在你的账号下会返回 422 错误
-  // 我们改用官方获取各分类的通用方式: /api/me/shelf/{category}，如果不行，尝试 /api/user/{username}/shelf/{type}
-  // 由于我刚才使用 curl 发现直接使用你原本的 URL 也可以工作，但是返回的是混合类型，我们通过 /me/shelf/item 试试
-  // 经测试 `curl -H "Authorization: Bearer <TOKEN>" https://neodb.social/api/me/shelf/complete` 会返回所有的已完成条目，所以用这个是没错的
-  const endpoint = `${NEODB_API_BASE}/me/shelf/${category}?page=${page}`;
+export interface NeoDBResponse {
+  items: NeoDBItem[];
+  count: number;
+}
+
+export async function getNeoDBShelf(type: 'book' | 'movie' | 'music' | 'game' | 'podcast', category: 'complete' | 'progress' | 'wishlist' = 'complete', page = 1): Promise<NeoDBResponse> {
+  const endpoint = `${NEODB_API_BASE}/me/shelf/${category}?category=${type}&page=${page}`;
   
   try {
     let data;
-    // 简单的内存级缓存，避免同一个页面渲染时多次请求同一个接口（因为并行发起了3个请求）
+    // 简单的内存级缓存，避免同一个页面渲染时多次请求同一个接口
     const now = Date.now();
-    if (cachedCompleteData && (now - lastFetchTime < 10000)) {
-      data = cachedCompleteData;
+    const cached = requestCache.get(endpoint);
+    if (cached && (now - cached.time < 10000)) {
+      data = cached.data;
     } else {
       data = await fetchWithRetry(endpoint);
-      cachedCompleteData = data;
-      lastFetchTime = now;
+      requestCache.set(endpoint, { data, time: now });
     }
     
-    if (!data || !data.data) return [];
+    if (!data || !data.data) return { items: [], count: 0 };
+
+    const count = data.count || 0;
 
     // NeoDB /me/shelf/{category} 返回的 item 对象结构
-    // 过滤出特定类型（book, movie, music 等）
-    // 注意：NeoDB 返回的类型可能带有 URL 路径，或者 item.category 就是类型字符串
-    const filteredData = data.data.filter((item: any) => {
-      // 容错处理：有时类型在 item.item.category 中，有时根据 API 返回结构决定
-      const itemType = item.item?.category || item.category || '';
-      return itemType.includes(type) || item.item?.url?.includes(`/${type}/`);
-    });
-
-    return filteredData.map((item: any) => ({
+    const items = data.data.map((item: any) => ({
       id: item.item?.uuid || item.uuid || '',
       title: item.item?.title || item.title || '未知标题',
       coverUrl: item.item?.cover_image_url || item.cover_image_url || '',
@@ -106,8 +99,9 @@ export async function getNeoDBShelf(type: 'book' | 'movie' | 'music' | 'game' | 
       brief: item.item?.brief || item.brief || '',
     }));
     
+    return { items, count };
   } catch (error) {
     console.error(`获取 NeoDB ${type} 数据失败:`, error);
-    return [];
+    return { items: [], count: 0 };
   }
 }

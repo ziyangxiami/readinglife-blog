@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Menu, X, BookOpen, Home, User, Search, Settings, Film } from 'lucide-react'
+import { Menu, X, BookOpen, Home, User, Search, Settings, Film, Map } from 'lucide-react'
 import { SearchBox } from './search-box'
 import Image from 'next/image'
 import { ThemeToggleSimple } from './theme-toggle-simple'
@@ -71,7 +71,7 @@ export function Navigation({ className }: NavigationProps) {
             <Link href="/" className="flex items-center gap-3 text-xl font-bold text-gray-900">
               <div className="w-8 h-8 relative">
                 <Image
-                  src="/logo-avatar-new.svg"
+                  src="/logo.svg"
                   alt="Reading Life Logo"
                   width={32}
                   height={32}
