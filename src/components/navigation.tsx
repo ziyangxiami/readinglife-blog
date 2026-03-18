@@ -26,6 +26,11 @@ const navigation = [
     icon: Film
   },
   {
+    name: '足迹',
+    href: '/travel',
+    icon: Map
+  },
+  {
     name: '关于',
     href: '/about',
     icon: User
